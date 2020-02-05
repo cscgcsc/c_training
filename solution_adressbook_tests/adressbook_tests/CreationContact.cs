@@ -47,7 +47,7 @@ namespace WebAddressBookTests
         [Test]
         public void CreateContact()
         {
-            Login(new User("admin", "password"));
+            Login(new User("admin", "secret"));
             Contact contactData = new Contact("Ivanov", "Ivan");
             contactData.middlename  = "Ivanovich";
             contactData.birthday    = 30;
