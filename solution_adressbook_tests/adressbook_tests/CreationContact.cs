@@ -20,10 +20,10 @@ namespace WebAddressBookTests
         [SetUp]
         public void SetupTest()
         {
-           //Proxy proxy = new Proxy();
-           //proxy.httpProxy = "fw21.corp.loc:3128";      
-           //FirefoxOptions options = new FirefoxOptions();
-           //options.Proxy = proxy;
+            //Proxy proxy = new Proxy();
+            //proxy.httpProxy = "fw21.corp.loc:3128";      
+            //FirefoxOptions options = new FirefoxOptions();
+            //options.Proxy = proxy;
 
             driver = new FirefoxDriver();
             baseURL = "https://localhost";
@@ -50,9 +50,9 @@ namespace WebAddressBookTests
             Login(new User("admin", "secret"));
             Contact contactData = new Contact("Ivanov", "Ivan");
             contactData.middlename  = "Ivanovich";
-            contactData.birthday    = 30;
+            contactData.birthday    = "30";
             contactData.birthmonth  = "July";
-            contactData.birthyear   = 1990;
+            contactData.birthyear   = "1990";
             FillingContactData(contactData);
             Logout();
         }
@@ -69,7 +69,18 @@ namespace WebAddressBookTests
 
         private void FillingContactData(Contact contactData)
         {
-            driver.FindElement(By.LinkText("add new")).Click();
+            for (int second = 0; ; second++)
+            {
+                if (second >= 60) Assert.Fail("timeout");
+                try
+                {
+                    if (IsElementPresent(By.XPath("//a[contains(text(),'add new')]"))) break;
+                }
+                catch (Exception)
+                { }
+                Thread.Sleep(1000);
+            }
+            driver.FindElement(By.XPath("//a[contains(text(),'add new')]")).Click();
             driver.FindElement(By.Name("firstname")).Clear();
             driver.FindElement(By.Name("firstname")).SendKeys(contactData.Firstname);
             driver.FindElement(By.Name("middlename")).Clear();
@@ -100,14 +111,14 @@ namespace WebAddressBookTests
             driver.FindElement(By.Name("email3")).SendKeys(contactData.email3);
             driver.FindElement(By.Name("homepage")).Clear();
             driver.FindElement(By.Name("homepage")).SendKeys(contactData.homepage);
-            new SelectElement(driver.FindElement(By.Name("bday"))).SelectByText(Convert.ToString(contactData.birthday));
-            new SelectElement(driver.FindElement(By.Name("bmonth"))).SelectByText(Convert.ToString(contactData.birthmonth));
+            new SelectElement(driver.FindElement(By.Name("bday"))).SelectByText(contactData.birthday);
+            new SelectElement(driver.FindElement(By.Name("bmonth"))).SelectByText(contactData.birthmonth);
             driver.FindElement(By.Name("byear")).Clear();
-            driver.FindElement(By.Name("byear")).SendKeys(Convert.ToString(contactData.birthyear));
-            new SelectElement(driver.FindElement(By.Name("aday"))).SelectByText(Convert.ToString(contactData.anniversaryday));
-            new SelectElement(driver.FindElement(By.Name("amonth"))).SelectByText(Convert.ToString(contactData.anniversarymonth));
+            driver.FindElement(By.Name("byear")).SendKeys(contactData.birthyear);
+            new SelectElement(driver.FindElement(By.Name("aday"))).SelectByText(contactData.anniversaryday);
+            new SelectElement(driver.FindElement(By.Name("amonth"))).SelectByText(contactData.anniversarymonth);
             driver.FindElement(By.Name("ayear")).Clear();
-            driver.FindElement(By.Name("ayear")).SendKeys(Convert.ToString(contactData.anniversaryyear));
+            driver.FindElement(By.Name("ayear")).SendKeys(contactData.anniversaryyear);
             driver.FindElement(By.Name("address2")).Clear();
             driver.FindElement(By.Name("address2")).SendKeys(contactData.address2);
             driver.FindElement(By.Name("phone2")).Clear();
