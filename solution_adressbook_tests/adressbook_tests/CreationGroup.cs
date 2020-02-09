@@ -42,24 +42,54 @@ namespace WebAddressBookTests
         [Test]
         public void CreateGroup()
         {
+            Login(new User("admin", "secret"));
+            Group groupData = new Group("Test groupname");
+            groupData.Groupheader = "Test groupheader";
+            groupData.Groupfooter = "Test groupfooter";
+            FillingGroupData(groupData);
+            Logout();
+        }
+
+        private void Login(User userData)
+        {
             driver.Navigate().GoToUrl("http://localhost/addressbook/index.php");
             driver.FindElement(By.Name("user")).Clear();
-            driver.FindElement(By.Name("user")).SendKeys("admin");
+            driver.FindElement(By.Name("user")).SendKeys(userData.login);
             driver.FindElement(By.Name("pass")).Clear();
-            driver.FindElement(By.Name("pass")).SendKeys("secret");
-            driver.FindElement(By.XPath("//input[@value='Login']")).Click();
-            driver.FindElement(By.LinkText("groups")).Click();
+            driver.FindElement(By.Name("pass")).SendKeys(userData.password);
+            driver.FindElement(By.Id("LoginForm")).Submit();
+        }
+
+        private void FillingGroupData(Group groupData)
+        {
+            for (int second = 0; ; second++)
+            {
+                if (second >= 60) Assert.Fail("timeout");
+                try
+                {
+                    if (IsElementPresent(By.XPath("//a[contains(text(),'groups')]"))) break;
+                }
+                catch (Exception)
+                { }
+                Thread.Sleep(1000);
+            }
+            driver.FindElement(By.XPath("//a[contains(text(),'groups')]")).Click();
             driver.FindElement(By.Name("new")).Click();
             driver.FindElement(By.Name("group_name")).Clear();
-            driver.FindElement(By.Name("group_name")).SendKeys("Test groupname");
+            driver.FindElement(By.Name("group_name")).SendKeys(groupData.Groupname);
             driver.FindElement(By.Name("group_header")).Clear();
-            driver.FindElement(By.Name("group_header")).SendKeys("Test groupheader");
+            driver.FindElement(By.Name("group_header")).SendKeys(groupData.Groupheader);
             driver.FindElement(By.Name("group_footer")).Clear();
-            driver.FindElement(By.Name("group_footer")).SendKeys("Test groupfooter");
+            driver.FindElement(By.Name("group_footer")).SendKeys(groupData.Groupfooter);
             driver.FindElement(By.Name("submit")).Click();
             driver.FindElement(By.LinkText("group page")).Click();
+        }
+
+        private void Logout()
+        {
             driver.FindElement(By.LinkText("Logout")).Click();
         }
+
         private bool IsElementPresent(By by)
         {
             try
