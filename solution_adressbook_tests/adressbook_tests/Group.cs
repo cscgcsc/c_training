@@ -16,8 +16,8 @@ namespace WebAddressBookTests
             this.groupname = groupname;
         }
 
-        public string Groupheader { get => groupname; set => groupname = value; }
-        public string Groupfooter { get => groupname; set => groupname = value; }
+        public string Groupheader { get => groupheader; set => groupheader = value; }
+        public string Groupfooter { get => groupfooter; set => groupfooter = value; }
         public string Groupname { get => groupname; set => groupname = value; }
     }
 }

@@ -21,8 +21,10 @@ namespace WebAddressBookTests
             FirefoxProfile profile = new FirefoxProfile();
             profile.SetPreference("security.enterprise_roots.enabled", true);
             profile.SetPreference("network.proxy.allow_hijacking_localhost", true);
-            FirefoxOptions options = new FirefoxOptions();
-            options.Profile = profile;
+            FirefoxOptions options = new FirefoxOptions
+            {
+                Profile = profile
+            };
             driver = new FirefoxDriver(options);
             baseURL = "http://localhost";
             verificationErrors = new StringBuilder();
@@ -62,6 +64,11 @@ namespace WebAddressBookTests
             driver.FindElement(By.XPath("(//input[@name='submit'])[1]")).Click();
         }
 
+        protected void RemoveGroup()
+        {
+            driver.FindElement(By.XPath("(//input[@name='delete'])[1]")).Click();
+        }
+
         protected void InitContactCreation()
         {
             By Element = By.XPath("//a[contains(text(),'add new')]");
@@ -69,7 +76,7 @@ namespace WebAddressBookTests
             driver.FindElement(Element).Click();
         }
 
-        protected void InitGroupCreation()
+        protected void InitGroupAction()
         {
             By Element = By.XPath("//a[contains(text(),'groups')]");
             WaitForElementPresent(Element);
@@ -79,9 +86,9 @@ namespace WebAddressBookTests
         protected void Login(User userData)
         {          
             driver.FindElement(By.Name("user")).Clear();
-            driver.FindElement(By.Name("user")).SendKeys(userData.login);
+            driver.FindElement(By.Name("user")).SendKeys(userData.Login);
             driver.FindElement(By.Name("pass")).Clear();
-            driver.FindElement(By.Name("pass")).SendKeys(userData.password);
+            driver.FindElement(By.Name("pass")).SendKeys(userData.Password);
             driver.FindElement(By.Id("LoginForm")).Submit();
         }
         protected void Logout()
@@ -148,6 +155,11 @@ namespace WebAddressBookTests
             driver.FindElement(By.Name("group_header")).SendKeys(groupData.Groupheader);
             driver.FindElement(By.Name("group_footer")).Clear();
             driver.FindElement(By.Name("group_footer")).SendKeys(groupData.Groupfooter);          
+        }
+
+        protected void SelectGroup(int index)
+        {
+            driver.FindElement(By.XPath("(//input[@name='selected[]'])[" + index + "]")).Click();
         }
 
         protected void WaitForElementPresent(By element)

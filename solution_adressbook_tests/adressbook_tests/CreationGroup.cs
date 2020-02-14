@@ -12,7 +12,7 @@ namespace WebAddressBookTests
         {
             OpenURL();
             Login(new User("admin", "secret"));
-            InitGroupCreation();
+            InitGroupAction();
             Group groupData = new Group("Test groupname")
             {
                 Groupheader = "Test groupheader",
