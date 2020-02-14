@@ -3,7 +3,7 @@
 namespace WebAddressBookTests
 {
     [TestFixture]
-    public class RemoveGroup : TestBase
+    public class RemovalGroup : TestBase
     {
         [Test]
         public void TheDelGroupTest()
