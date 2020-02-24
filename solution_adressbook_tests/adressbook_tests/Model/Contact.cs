@@ -26,7 +26,7 @@ namespace WebAddressBookTests
         public string Birthday { get; set; } = "";
         public string Birthmonth { get; set; } = "-";
         public string Birthyear { get; set; } = "";
-        public string Anniversaryday { get; set; } = "";
+        public string Anniversaryday { get; set; } = "-";
         public string Anniversarymonth { get; set; } = "-";
         public string Anniversaryyear { get; set; } = "";
         public string Address2 { get; set; } = "";
@@ -50,6 +50,7 @@ namespace WebAddressBookTests
                 firstname = value;
             }
         }
+
         public string Lastname
         {
             get

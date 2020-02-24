@@ -1,4 +1,6 @@
-﻿using OpenQA.Selenium;
+﻿using System.Text.RegularExpressions;
+using NUnit.Framework;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 
@@ -6,15 +8,43 @@ namespace WebAddressBookTests
 {
     public class ContactHelper : HelperBase
     {
-        public ContactHelper(IWebDriver driver) : base(driver)
+        public ContactHelper(ApplicationManager applicationManager) : base(applicationManager)
         {
         }
-        public void InitContactCreation()
+       
+        public void Create(Contact contactData)
         {
-            By Element = By.XPath("//a[contains(text(),'add new')]");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            applicationManager.NavigationHelper.GoToNewGroupPage();
+            FillingContactData(contactData);
+            FormSubmit();
+            applicationManager.NavigationHelper.ReturnToHomePage();
         }
+
+        public void ModifyFromHomePage(Contact contactData, int index)
+        {
+            applicationManager.NavigationHelper.GoToHomePage();
+            ModifyContact(index);
+            FillingContactData(contactData);
+            FormUpdate();
+            applicationManager.NavigationHelper.ReturnToHomePage();
+        }
+
+        public void ModifyContactFromBirthdayPage(Contact contactData, int index)
+        {
+            applicationManager.NavigationHelper.GoToBirthdayPage();
+            ModifyContact(index);
+            FillingContactData(contactData);
+            FormUpdate();
+            applicationManager.NavigationHelper.ReturnToHomePage();
+        }
+
+        public void Remove(int index)
+        {
+            applicationManager.NavigationHelper.GoToHomePage();
+            SelectContact(index);
+            FormDelete();
+        }
+
         public void FillingContactData(Contact contactData)
         {
             driver.FindElement(By.Name("firstname")).Clear();
@@ -62,9 +92,35 @@ namespace WebAddressBookTests
             driver.FindElement(By.Name("notes")).Clear();
             driver.FindElement(By.Name("notes")).SendKeys(contactData.Notes);
         }
-        public void SubmitForm()
+
+        public void ModifyContact(int index) 
+        {
+            By Element = By.XPath("//a[@href='edit.php?id=" + index + "']");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();
+        }
+
+        public void SelectContact(int index)
+        {
+            By Element = By.XPath("(//input[@name='selected[]'])[" + index + "]");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();
+        }
+
+        public void FormSubmit()
         {
             driver.FindElement(By.XPath("(//input[@name='submit'])[1]")).Click();
+        }
+
+        public void FormUpdate()
+        {
+            driver.FindElement(By.XPath("(//input[@name='update'])[1]")).Click();
+        }
+
+        public void FormDelete()
+        {
+            driver.FindElement(By.XPath("//input[@value='Delete']")).Click();
+            Assert.IsTrue(Regex.IsMatch(CloseAlertAndGetItsText(true), "^Delete 1 addresses[\\s\\S]$"));
         }
     }
 }

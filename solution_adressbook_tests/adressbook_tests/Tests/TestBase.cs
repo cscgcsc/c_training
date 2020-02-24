@@ -10,11 +10,14 @@ namespace WebAddressBookTests
         protected void SetupTest()
         {
             applicationManager = new ApplicationManager();
+            applicationManager.NavigationHelper.OpenURL();
+            applicationManager.LoginHelper.Login(new User("admin", "secret"));
         }
 
         [TearDown]
-        private void TeardownTest()
+        protected void TeardownTest()
         {
+            applicationManager.LoginHelper.Logout();
             applicationManager.StopDriver();
         }
     }

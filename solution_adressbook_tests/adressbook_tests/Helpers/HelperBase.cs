@@ -13,10 +13,14 @@ namespace WebAddressBookTests
     public class HelperBase
     {
         protected IWebDriver driver;
-        public HelperBase(IWebDriver driver)
+        protected ApplicationManager applicationManager;
+
+        public HelperBase(ApplicationManager applicationManager)
         {
-            this.driver = driver;
-        } 
+            driver = applicationManager.Driver;
+            this.applicationManager = applicationManager;
+        }
+
         protected void WaitForElementPresent(By element)
         {
             for (int second = 0; ; second++)
@@ -31,6 +35,7 @@ namespace WebAddressBookTests
                 Thread.Sleep(1000);
             }
         }
+
         protected bool IsElementPresent(By by)
         {
             try
@@ -41,6 +46,28 @@ namespace WebAddressBookTests
             catch (NoSuchElementException)
             {
                 return false;
+            }
+        }
+
+        protected string CloseAlertAndGetItsText(bool acceptNextAlert)
+        {
+            try
+            {
+                IAlert alert = driver.SwitchTo().Alert();
+                string alertText = alert.Text;
+                if (acceptNextAlert)
+                {
+                    alert.Accept();
+                }
+                else
+                {
+                    alert.Dismiss();
+                }
+                return alertText;
+            }
+            finally
+            {
+                acceptNextAlert = true;
             }
         }
     }  

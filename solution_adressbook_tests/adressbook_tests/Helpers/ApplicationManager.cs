@@ -15,8 +15,8 @@ namespace WebAddressBookTests
         public GroupHelper GroupHelper { get; set; }
         public NavigationHelper NavigationHelper { get; set; }
         public ContactHelper ContactHelper { get; set; }
-        private IWebDriver driver;
-        private string baseURL;
+        public IWebDriver Driver { get; set; }
+        public string baseURL;
 
         public ApplicationManager()
         {
@@ -27,20 +27,20 @@ namespace WebAddressBookTests
             {
                 Profile = profile
             };
-            driver = new FirefoxDriver(options);
+            Driver = new FirefoxDriver(options);
             baseURL = "http://localhost";
 
-            LoginHelper = new LoginHelper(driver);
-            GroupHelper = new GroupHelper(driver);
-            NavigationHelper = new NavigationHelper(driver, baseURL);
-            ContactHelper = new ContactHelper(driver);
+            LoginHelper = new LoginHelper(this);
+            GroupHelper = new GroupHelper(this);
+            NavigationHelper = new NavigationHelper(this);
+            ContactHelper = new ContactHelper(this);
         }
 
         public void StopDriver()
         {
             try
             {
-                driver.Quit();
+                Driver.Quit();
             }
             catch (Exception)
             {

@@ -11,6 +11,7 @@ namespace WebAddressBookTests
         private string groupname;
         private string groupheader;
         private string groupfooter;
+
         public Group(string groupname)
         {
             this.groupname = groupname;

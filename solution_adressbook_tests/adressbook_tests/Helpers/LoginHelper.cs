@@ -6,9 +6,10 @@ namespace WebAddressBookTests
 {
     public class LoginHelper : HelperBase
     {
-        public LoginHelper(IWebDriver driver) : base(driver)
+        public LoginHelper(ApplicationManager applicationManager) : base(applicationManager)
         {
         }
+
         public void Login(User userData)
         {
             driver.FindElement(By.Name("user")).Clear();
@@ -17,6 +18,7 @@ namespace WebAddressBookTests
             driver.FindElement(By.Name("pass")).SendKeys(userData.Password);
             driver.FindElement(By.Id("LoginForm")).Submit();
         }
+
         public void Logout()
         {
             By Element = By.XPath("//a[contains(text(),'Logout')]");
