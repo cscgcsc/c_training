@@ -95,7 +95,7 @@ namespace WebAddressBookTests
 
         public void ModifyContact(int index) 
         {
-            By Element = By.XPath("//a[@href='edit.php?id=" + index + "']");
+            By Element = By.XPath("(//table//a[contains(@href,'edit.php')])[" + index + "]");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();
         }
