@@ -36,11 +36,11 @@ namespace WebAddressBookTests
             }
         }
 
-        protected bool IsElementPresent(By by)
+        protected bool IsElementPresent(By element)
         {
             try
             {
-                driver.FindElement(by);
+                driver.FindElement(element);
                 return true;
             }
             catch (NoSuchElementException)
@@ -68,6 +68,23 @@ namespace WebAddressBookTests
             finally
             {
                 acceptNextAlert = true;
+            }
+        }
+
+        protected void Type(By element, string value)
+        {
+            if(value != null)
+            {
+                driver.FindElement(element).Clear();
+                driver.FindElement(element).SendKeys(value);
+            }
+        }
+
+        protected void Select(By element, string value)
+        {
+            if (value != null)
+            {
+                new SelectElement(driver.FindElement(element)).SelectByText(value);
             }
         }
     }  

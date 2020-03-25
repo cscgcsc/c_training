@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
+using System;
 
 namespace WebAddressBookTests
 {
@@ -22,6 +23,7 @@ namespace WebAddressBookTests
         public void Modify(Group groupData, int index)
         {
             applicationManager.NavigationHelper.GoToGroupPage();
+            InitGroup();
             SelectGroup(index);
             ModifyGroup();
             FillingGroupData(groupData);
@@ -32,6 +34,7 @@ namespace WebAddressBookTests
         public void Remove(int index)
         {
             applicationManager.NavigationHelper.GoToGroupPage();
+            InitGroup();
             SelectGroup(index);
             RemoveGroup();
             applicationManager.NavigationHelper.ReturnToGroupPage();
@@ -39,12 +42,17 @@ namespace WebAddressBookTests
 
         public void FillingGroupData(Group groupData)
         {
-            driver.FindElement(By.Name("group_name")).Clear();
-            driver.FindElement(By.Name("group_name")).SendKeys(groupData.Groupname);
-            driver.FindElement(By.Name("group_header")).Clear();
-            driver.FindElement(By.Name("group_header")).SendKeys(groupData.Groupheader);
-            driver.FindElement(By.Name("group_footer")).Clear();
-            driver.FindElement(By.Name("group_footer")).SendKeys(groupData.Groupfooter);
+            Type(By.Name("group_name"), groupData.Groupname);
+            Type(By.Name("group_header"), groupData.Groupheader);
+            Type(By.Name("group_footer"), groupData.Groupfooter);
+        }
+
+        private void InitGroup()
+        {
+            if (!IsElementPresent(By.XPath("//span[@class='group']")))
+            {
+                Create(new Group("Test groupname"));
+            }
         }
 
         public void AddGroup()

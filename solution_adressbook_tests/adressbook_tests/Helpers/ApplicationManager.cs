@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
@@ -17,8 +17,9 @@ namespace WebAddressBookTests
         public ContactHelper ContactHelper { get; set; }
         public IWebDriver Driver { get; set; }
         public string baseURL;
+        private static ThreadLocal<ApplicationManager> instance = new ThreadLocal<ApplicationManager>();
 
-        public ApplicationManager()
+        private ApplicationManager()
         {
             FirefoxProfile profile = new FirefoxProfile();
             profile.SetPreference("security.enterprise_roots.enabled", true);
@@ -36,7 +37,15 @@ namespace WebAddressBookTests
             ContactHelper = new ContactHelper(this);
         }
 
-        public void StopDriver()
+        public static ApplicationManager GetInstance()
+        {
+            if (!instance.IsValueCreated)
+            {
+                instance.Value = new ApplicationManager();
+            }           
+            return instance.Value;
+        }
+        ~ApplicationManager()
         {
             try
             {

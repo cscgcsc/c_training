@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -11,116 +12,153 @@ namespace WebAddressBookTests
         public ContactHelper(ApplicationManager applicationManager) : base(applicationManager)
         {
         }
-       
+
         public void Create(Contact contactData)
         {
-            applicationManager.NavigationHelper.GoToNewGroupPage();
+            applicationManager.NavigationHelper.GoToNewContactPage();
             FillingContactData(contactData);
             FormSubmit();
             applicationManager.NavigationHelper.ReturnToHomePage();
         }
 
         public void ModifyFromHomePage(Contact contactData, int index)
-        {
-            applicationManager.NavigationHelper.GoToHomePage();
+        {       
+            InitContact();
             ModifyContact(index);
             FillingContactData(contactData);
             FormUpdate();
             applicationManager.NavigationHelper.ReturnToHomePage();
         }
 
-        public void ModifyContactFromBirthdayPage(Contact contactData, int index)
-        {
+        public void ModifyFromBirthdayPage(Contact contactData, int index)
+        {    
             applicationManager.NavigationHelper.GoToBirthdayPage();
+            InitContact();          
             ModifyContact(index);
             FillingContactData(contactData);
             FormUpdate();
             applicationManager.NavigationHelper.ReturnToHomePage();
         }
 
-        public void Remove(int index)
+        public void Remove(int index=0)
         {
-            applicationManager.NavigationHelper.GoToHomePage();
+            InitContact();
             SelectContact(index);
             FormDelete();
         }
 
         public void FillingContactData(Contact contactData)
         {
-            driver.FindElement(By.Name("firstname")).Clear();
-            driver.FindElement(By.Name("firstname")).SendKeys(contactData.Firstname);
-            driver.FindElement(By.Name("middlename")).Clear();
-            driver.FindElement(By.Name("middlename")).SendKeys(contactData.Middlename);
-            driver.FindElement(By.Name("lastname")).Clear();
-            driver.FindElement(By.Name("lastname")).SendKeys(contactData.Lastname);
-            driver.FindElement(By.Name("nickname")).Clear();
-            driver.FindElement(By.Name("nickname")).SendKeys(contactData.Nickname);
-            driver.FindElement(By.Name("title")).Clear();
-            driver.FindElement(By.Name("title")).SendKeys(contactData.Title);
-            driver.FindElement(By.Name("company")).Clear();
-            driver.FindElement(By.Name("company")).SendKeys(contactData.Company);
-            driver.FindElement(By.Name("address")).Clear();
-            driver.FindElement(By.Name("address")).SendKeys(contactData.Address);
-            driver.FindElement(By.Name("home")).Clear();
-            driver.FindElement(By.Name("home")).SendKeys(contactData.Home);
-            driver.FindElement(By.Name("mobile")).Clear();
-            driver.FindElement(By.Name("mobile")).SendKeys(contactData.Mobile);
-            driver.FindElement(By.Name("work")).Clear();
-            driver.FindElement(By.Name("work")).SendKeys(contactData.Work);
-            driver.FindElement(By.Name("fax")).Clear();
-            driver.FindElement(By.Name("fax")).SendKeys(contactData.Fax);
-            driver.FindElement(By.Name("email")).Clear();
-            driver.FindElement(By.Name("email")).SendKeys(contactData.Email);
-            driver.FindElement(By.Name("email2")).Clear();
-            driver.FindElement(By.Name("email2")).SendKeys(contactData.Email2);
-            driver.FindElement(By.Name("email3")).Clear();
-            driver.FindElement(By.Name("email3")).SendKeys(contactData.Email3);
-            driver.FindElement(By.Name("homepage")).Clear();
-            driver.FindElement(By.Name("homepage")).SendKeys(contactData.Homepage);
-            new SelectElement(driver.FindElement(By.Name("bday"))).SelectByText(contactData.Birthday);
-            new SelectElement(driver.FindElement(By.Name("bmonth"))).SelectByText(contactData.Birthmonth);
-            driver.FindElement(By.Name("byear")).Clear();
-            driver.FindElement(By.Name("byear")).SendKeys(contactData.Birthyear);
-            new SelectElement(driver.FindElement(By.Name("aday"))).SelectByText(contactData.Anniversaryday);
-            new SelectElement(driver.FindElement(By.Name("amonth"))).SelectByText(contactData.Anniversarymonth);
-            driver.FindElement(By.Name("ayear")).Clear();
-            driver.FindElement(By.Name("ayear")).SendKeys(contactData.Anniversaryyear);
-            driver.FindElement(By.Name("address2")).Clear();
-            driver.FindElement(By.Name("address2")).SendKeys(contactData.Address2);
-            driver.FindElement(By.Name("phone2")).Clear();
-            driver.FindElement(By.Name("phone2")).SendKeys(contactData.Phone2);
-            driver.FindElement(By.Name("notes")).Clear();
-            driver.FindElement(By.Name("notes")).SendKeys(contactData.Notes);
+            Type(By.Name("firstname"), contactData.Firstname);
+            Type(By.Name("middlename"), contactData.Middlename);
+            Type(By.Name("lastname"), contactData.Lastname);
+            Type(By.Name("nickname"), contactData.Nickname);
+            Type(By.Name("title"), contactData.Title);
+            Type(By.Name("company"), contactData.Company);
+            Type(By.Name("address"), contactData.Address);
+            Type(By.Name("home"), contactData.Home);
+            Type(By.Name("mobile"), contactData.Mobile);
+            Type(By.Name("work"), contactData.Work);
+            Type(By.Name("fax"), contactData.Fax);
+            Type(By.Name("email"), contactData.Email);
+            Type(By.Name("email2"), contactData.Email2);
+            Type(By.Name("email3"), contactData.Email3);
+            Type(By.Name("homepage"), contactData.Homepage);
+            Select(By.Name("bday"), contactData.Birthday);
+            Select(By.Name("bmonth"), contactData.Birthmonth);       
+            Type(By.Name("byear"), contactData.Birthyear);
+            Select(By.Name("aday"), contactData.Anniversaryday);
+            Select(By.Name("amonth"), contactData.Anniversarymonth);
+            Type(By.Name("ayear"), contactData.Anniversaryyear);
+            Type(By.Name("address2"), contactData.Address2);
+            Type(By.Name("phone2"), contactData.Phone2);
+            Type(By.Name("notes"), contactData.Notes);
         }
 
-        public void ModifyContact(int index) 
+        private void InitContact()
+        {
+            if (driver.Url == applicationManager.baseURL + "/addressbook/index.php")
+            {
+                ClearContactGroupFilter();
+                if (driver.FindElement(By.XPath("//span[@id='search_count']")).Text == "0")
+                {
+                    Create(GetDefaultContactData());
+                }
+
+            }
+            else if (driver.Url == applicationManager.baseURL + "/addressbook/birthdays.php")
+            {
+                if (!IsElementPresent(By.XPath("//table[@id='birthdays']//tr")))
+                {
+                    Create(GetDefaultContactData());
+                    applicationManager.NavigationHelper.GoToBirthdayPage();
+                }
+            }
+        }
+
+        private void ModifyContact(int index) 
         {
             By Element = By.XPath("(//table//a[contains(@href,'edit.php')])[" + index + "]");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();
         }
 
-        public void SelectContact(int index)
+        private void SelectContact(int index)
         {
-            By Element = By.XPath("(//input[@name='selected[]'])[" + index + "]");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            if (index != 0)
+            {
+                By Element = By.XPath("(//input[@name='selected[]'])[" + index + "]");
+                WaitForElementPresent(Element);
+                driver.FindElement(Element).Click();
+            }
+            else 
+            {
+                By Element = By.XPath("//input[@id='MassCB']");
+                WaitForElementPresent(Element);
+                driver.FindElement(Element).Click();
+            }         
+        }     
+
+        private Contact GetDefaultContactData()
+        {
+            Contact contactData = new Contact("Ivanov", "Ivan")
+            {
+                Birthday = "1",
+                Birthmonth = "January",
+                Birthyear = "1900"
+            };
+            return contactData;
         }
 
-        public void FormSubmit()
+        public void ClearContactGroupFilter()
+        {
+            By Element = By.XPath("//select[@name='group']");
+            WaitForElementPresent(Element);
+            new SelectElement(driver.FindElement(Element)).SelectByText("[all]");
+            driver.FindElement(By.XPath("//option[@value='']")).Click();
+        }
+
+        public bool IsContactListEmpty()
+        {
+            return driver.FindElement(By.XPath("//span[@id='search_count']")).Text == "0";
+        }
+
+        private void FormSubmit()
         {
             driver.FindElement(By.XPath("(//input[@name='submit'])[1]")).Click();
         }
 
-        public void FormUpdate()
+        private void FormUpdate()
         {
             driver.FindElement(By.XPath("(//input[@name='update'])[1]")).Click();
         }
 
-        public void FormDelete()
+        private void FormDelete()
         {
             driver.FindElement(By.XPath("//input[@value='Delete']")).Click();
-            Assert.IsTrue(Regex.IsMatch(CloseAlertAndGetItsText(true), "^Delete 1 addresses[\\s\\S]$"));
+            Assert.IsTrue(Regex.IsMatch(CloseAlertAndGetItsText(true), "^Delete \\d* addresses[\\s\\S]$"));
+
+            WaitForElementPresent(By.XPath("//div[@class='msgbox'][contains(text(),'Record successful deleted')]"));
         }
     }
 }

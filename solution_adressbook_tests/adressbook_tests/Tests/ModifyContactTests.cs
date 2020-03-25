@@ -3,7 +3,7 @@
 namespace WebAddressBookTests
 {
     [TestFixture]
-    public class ModifyContactTests : TestBase
+    public class ModifyContactTests : AuthorizationTestBase
     {
         [Test]
         public void ModifyContactFromHomePage()
@@ -28,7 +28,7 @@ namespace WebAddressBookTests
                 Birthmonth = "January",
                 Birthyear = "1900"
             };
-            applicationManager.ContactHelper.ModifyContactFromBirthdayPage(contactData, 2);
+            applicationManager.ContactHelper.ModifyFromBirthdayPage(contactData, 1);
         }
     }
 }

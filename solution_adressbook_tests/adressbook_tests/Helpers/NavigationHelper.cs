@@ -13,11 +13,19 @@ namespace WebAddressBookTests
 
         public void OpenURL()
         {
+            if(driver.Url == applicationManager.baseURL + "/addressbook/index.php")
+            {
+                return;
+            }
             driver.Navigate().GoToUrl(applicationManager.baseURL + "/addressbook/index.php");
         }
 
         public void GoToHomePage()
         {
+            if (driver.Url == applicationManager.baseURL + "/addressbook/index.php")
+            {
+                return;
+            }
             By Element = By.LinkText("home");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();
@@ -25,6 +33,10 @@ namespace WebAddressBookTests
 
         public void ReturnToHomePage()
         {
+            if (driver.Url == applicationManager.baseURL + "/addressbook/index.php")
+            {
+                return;
+            }
             By Element = By.LinkText("home page");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();
@@ -32,6 +44,10 @@ namespace WebAddressBookTests
 
         public void GoToGroupPage()
         {
+            if (driver.Url == applicationManager.baseURL + "/addressbook/group.php")
+            {
+                return;
+            }
             By Element = By.LinkText("groups");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();
@@ -46,13 +62,21 @@ namespace WebAddressBookTests
 
         public void GoToBirthdayPage()
         {
+            if (driver.Url == applicationManager.baseURL + "/addressbook/birthdays.php")
+            {
+                return;
+            }
             By Element = By.LinkText("next birthdays");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();
         }
 
-        public void GoToNewGroupPage()
+        public void GoToNewContactPage()
         {
+            if (driver.Url == applicationManager.baseURL + "/addressbook/edit.php")
+            {
+                return;
+            }
             By Element = By.LinkText("add new");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();

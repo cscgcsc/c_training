@@ -3,7 +3,7 @@
 namespace WebAddressBookTests
 {
     [TestFixture]
-    public class ModifyGroupTests : TestBase
+    public class ModifyGroupTests : AuthorizationTestBase
     {
         [Test]
         public void ModifyGroup()

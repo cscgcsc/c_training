@@ -67,6 +67,8 @@
     <Compile Include="Helpers\HelperBase.cs" />
     <Compile Include="Helpers\LoginHelper.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
+    <Compile Include="Tests\AuthorizationTestBase.cs" />
+    <Compile Include="Tests\AuthorizationTests.cs" />
     <Compile Include="Tests\ModifyContactTests.cs" />
     <Compile Include="Tests\ModifyGroupTests.cs" />
     <Compile Include="Tests\RemovalContactTests.cs" />

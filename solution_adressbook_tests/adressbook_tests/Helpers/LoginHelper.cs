@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
+using System.Threading;
 
 namespace WebAddressBookTests
 {
@@ -12,18 +13,40 @@ namespace WebAddressBookTests
 
         public void Login(User userData)
         {
-            driver.FindElement(By.Name("user")).Clear();
-            driver.FindElement(By.Name("user")).SendKeys(userData.Login);
-            driver.FindElement(By.Name("pass")).Clear();
-            driver.FindElement(By.Name("pass")).SendKeys(userData.Password);
+            if(IsLoggedIn())
+            {
+                if (IsLoggedIn(userData))
+                {
+                    return;
+                }                 
+                Logout();               
+            }
+
+            Type(By.Name("user"), userData.Login);
+            Type(By.Name("pass"), userData.Password);
             driver.FindElement(By.Id("LoginForm")).Submit();
+
+            Thread.Sleep(1000);
         }
 
         public void Logout()
+        {       
+            By Element = By.XPath("//a[contains(text(),'Logout')]");           
+            if (IsElementPresent(Element))
+            {
+                driver.FindElement(Element).Click();
+            }
+        }
+
+        public bool IsLoggedIn(User userData)
         {
-            By Element = By.XPath("//a[contains(text(),'Logout')]");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            return IsElementPresent(By.XPath("//form[@name='logout']"))
+                && IsElementPresent(By.XPath("//form[@name='logout']/b[contains(text(),'(" + userData.Login + ")')]"));           
+        }
+
+        public bool IsLoggedIn()
+        {
+            return IsElementPresent(By.XPath("//form[@name='logout']"));       
         }
     }
 }
