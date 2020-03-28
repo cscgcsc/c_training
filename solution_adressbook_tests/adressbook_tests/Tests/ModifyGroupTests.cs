@@ -8,6 +8,12 @@ namespace WebAddressBookTests
         [Test]
         public void ModifyGroup()
         {
+            applicationManager.NavigationHelper.GoToGroupPage();
+            if (applicationManager.GroupHelper.IsGroupsListEmpty())
+            {
+                applicationManager.GroupHelper.Create(new Group("Test groupname"));
+            }
+
             Group groupData = new Group("New groupname")
             {
                 Groupheader = "New groupheader",

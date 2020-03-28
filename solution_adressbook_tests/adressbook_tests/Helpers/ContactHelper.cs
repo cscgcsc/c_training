@@ -22,8 +22,8 @@ namespace WebAddressBookTests
         }
 
         public void ModifyFromHomePage(Contact contactData, int index)
-        {       
-            InitContact();
+        {
+            applicationManager.NavigationHelper.GoToHomePage();
             ModifyContact(index);
             FillingContactData(contactData);
             FormUpdate();
@@ -32,8 +32,7 @@ namespace WebAddressBookTests
 
         public void ModifyFromBirthdayPage(Contact contactData, int index)
         {    
-            applicationManager.NavigationHelper.GoToBirthdayPage();
-            InitContact();          
+            applicationManager.NavigationHelper.GoToBirthdayPage();      
             ModifyContact(index);
             FillingContactData(contactData);
             FormUpdate();
@@ -42,7 +41,6 @@ namespace WebAddressBookTests
 
         public void Remove(int index=0)
         {
-            InitContact();
             SelectContact(index);
             FormDelete();
         }
@@ -75,25 +73,16 @@ namespace WebAddressBookTests
             Type(By.Name("notes"), contactData.Notes);
         }
 
-        private void InitContact()
+        public bool IsContactsListEmpty()
         {
-            if (driver.Url == applicationManager.baseURL + "/addressbook/index.php")
-            {
-                ClearContactGroupFilter();
-                if (driver.FindElement(By.XPath("//span[@id='search_count']")).Text == "0")
-                {
-                    Create(GetDefaultContactData());
-                }
+            ClearContactGroupFilter();
+            return driver.FindElement(By.XPath("//span[@id='search_count']")).Text == "0";
+        }
 
-            }
-            else if (driver.Url == applicationManager.baseURL + "/addressbook/birthdays.php")
-            {
-                if (!IsElementPresent(By.XPath("//table[@id='birthdays']//tr")))
-                {
-                    Create(GetDefaultContactData());
-                    applicationManager.NavigationHelper.GoToBirthdayPage();
-                }
-            }
+        public bool IsBirthdaysListEmpty()
+        {
+            applicationManager.NavigationHelper.GoToBirthdayPage();
+            return !IsElementPresent(By.XPath("//table[@id='birthdays']//tr"));
         }
 
         private void ModifyContact(int index) 
@@ -119,7 +108,7 @@ namespace WebAddressBookTests
             }         
         }     
 
-        private Contact GetDefaultContactData()
+        public Contact GetDefaultContactData()
         {
             Contact contactData = new Contact("Ivanov", "Ivan")
             {

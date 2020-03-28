@@ -23,7 +23,6 @@ namespace WebAddressBookTests
         public void Modify(Group groupData, int index)
         {
             applicationManager.NavigationHelper.GoToGroupPage();
-            InitGroup();
             SelectGroup(index);
             ModifyGroup();
             FillingGroupData(groupData);
@@ -34,7 +33,6 @@ namespace WebAddressBookTests
         public void Remove(int index)
         {
             applicationManager.NavigationHelper.GoToGroupPage();
-            InitGroup();
             SelectGroup(index);
             RemoveGroup();
             applicationManager.NavigationHelper.ReturnToGroupPage();
@@ -47,12 +45,9 @@ namespace WebAddressBookTests
             Type(By.Name("group_footer"), groupData.Groupfooter);
         }
 
-        private void InitGroup()
+        public bool IsGroupsListEmpty()
         {
-            if (!IsElementPresent(By.XPath("//span[@class='group']")))
-            {
-                Create(new Group("Test groupname"));
-            }
+            return !IsElementPresent(By.XPath("//span[@class='group']"));
         }
 
         public void AddGroup()

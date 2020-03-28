@@ -8,6 +8,12 @@ namespace WebAddressBookTests
         [Test]
         public void ModifyContactFromHomePage()
         {
+            applicationManager.NavigationHelper.GoToHomePage();
+            if (applicationManager.ContactHelper.IsContactsListEmpty())
+            {
+                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
+            }
+
             Contact contactData = new Contact("Petrov", "Petr")
             {
                 Middlename = "Petrovich",
@@ -21,6 +27,12 @@ namespace WebAddressBookTests
         [Test]
         public void ModifyContactFromBirthdayPage()
         {
+            applicationManager.NavigationHelper.GoToBirthdayPage();
+            if (applicationManager.ContactHelper.IsBirthdaysListEmpty())
+            {
+                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
+            }
+
             Contact contactData = new Contact("Maksimov", "Maksim")
             {
                 Middlename = "Maksimovich",
