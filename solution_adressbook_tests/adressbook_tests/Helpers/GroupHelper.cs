@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections.Generic;
 
 namespace WebAddressBookTests
 {
@@ -50,6 +51,19 @@ namespace WebAddressBookTests
             return !IsElementPresent(By.XPath("//span[@class='group']"));
         }
 
+        public List<Group> GetGroupsList()
+        {       
+            List<Group> groups = new List<Group>();
+            ICollection<IWebElement> elements = driver.FindElements(By.XPath("//span[@class='group']"));
+
+            foreach(IWebElement element in elements)
+            {
+                groups.Add(new Group(element.Text));
+            }
+
+            return groups;
+        } 
+
         public void AddGroup()
         {
             driver.FindElement(By.Name("new")).Click();
@@ -67,7 +81,7 @@ namespace WebAddressBookTests
 
         public void SelectGroup(int index)
         {
-            driver.FindElement(By.XPath("(//input[@name='selected[]'])[" + index + "]")).Click();
+            driver.FindElement(By.XPath("(//input[@name='selected[]'])[" + (index + 1) + "]")).Click();
         }
 
         public void FormSubmit()

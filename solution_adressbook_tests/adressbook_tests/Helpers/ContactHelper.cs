@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
+using System.Linq;
 
 namespace WebAddressBookTests
 {
@@ -39,13 +41,40 @@ namespace WebAddressBookTests
             applicationManager.NavigationHelper.ReturnToHomePage();
         }
 
-        public void Remove(int index=0)
+        public void Remove(int index)
         {
             SelectContact(index);
             FormDelete();
         }
 
-        public void FillingContactData(Contact contactData)
+        public void Remove()
+        {
+            SelectAllContacts();
+            FormDelete();
+        }
+
+        public List<Contact> GetContactsList()
+        {          
+            List<Contact> contacts = new List<Contact>();
+            
+            By Element = By.XPath("//table[@id='maintable']/tbody/tr");
+            WaitForElementPresent(Element);
+            ICollection<IWebElement> rows = driver.FindElements(Element);
+
+            foreach (IWebElement row in rows)
+            {
+                List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
+                //Если это заголовок таблицы <th>
+                if (cells.Count == 0)
+                {
+                    continue;
+                }
+                contacts.Add(new Contact(cells[2].Text, cells[1].Text));
+            }
+            return contacts;
+        }
+
+        private void FillingContactData(Contact contactData)
         {
             Type(By.Name("firstname"), contactData.Firstname);
             Type(By.Name("middlename"), contactData.Middlename);
@@ -87,30 +116,28 @@ namespace WebAddressBookTests
 
         private void ModifyContact(int index) 
         {
-            By Element = By.XPath("(//table//a[contains(@href,'edit.php')])[" + index + "]");
+            By Element = By.XPath("(//table//a[contains(@href,'edit.php')])[" + (index + 1) + "]");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();
         }
 
         private void SelectContact(int index)
         {
-            if (index != 0)
-            {
-                By Element = By.XPath("(//input[@name='selected[]'])[" + index + "]");
-                WaitForElementPresent(Element);
-                driver.FindElement(Element).Click();
-            }
-            else 
-            {
-                By Element = By.XPath("//input[@id='MassCB']");
-                WaitForElementPresent(Element);
-                driver.FindElement(Element).Click();
-            }         
-        }     
+            By Element = By.XPath("(//input[@name='selected[]'])[" + (index + 1) + "]");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();      
+        }
+
+        private void SelectAllContacts()
+        {
+            By Element = By.XPath("//input[@id='MassCB']");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();
+        }
 
         public Contact GetDefaultContactData()
         {
-            Contact contactData = new Contact("Ivanov", "Ivan")
+            Contact contactData = new Contact("Ivan", "Ivanov")
             {
                 Birthday = "1",
                 Birthmonth = "January",
@@ -119,7 +146,7 @@ namespace WebAddressBookTests
             return contactData;
         }
 
-        public void ClearContactGroupFilter()
+        private void ClearContactGroupFilter()
         {
             By Element = By.XPath("//select[@name='group']");
             WaitForElementPresent(Element);
