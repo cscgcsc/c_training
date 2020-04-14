@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -87,5 +84,5 @@ namespace WebAddressBookTests
                 new SelectElement(driver.FindElement(element)).SelectByText(value);
             }
         }
-    }  
+    }
 }

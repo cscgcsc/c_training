@@ -16,12 +16,14 @@ namespace WebAddressBookTests
                 Birthmonth = "July",
                 Birthyear = "1990"
             };
-
+            StartCalculationRunTime();
             List<Contact> oldContactsList = applicationManager.ContactHelper.GetContactsList();
+            StopCalculationRunTime();
             oldContactsList.Add(contactData);
             oldContactsList.Sort();
 
             applicationManager.ContactHelper.Create(contactData);
+            
             List<Contact> newContactsList = applicationManager.ContactHelper.GetContactsList();
             newContactsList.Sort();
 

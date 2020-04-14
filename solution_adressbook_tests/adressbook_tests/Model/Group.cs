@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WebAddressBookTests
 {
@@ -20,6 +16,7 @@ namespace WebAddressBookTests
         public string Groupheader { get => groupheader; set => groupheader = value; }
         public string Groupfooter { get => groupfooter; set => groupfooter = value; }
         public string Groupname { get => groupname; set => groupname = value; }
+        public string Id { get; set; }
 
         public int CompareTo(Group other)
         {

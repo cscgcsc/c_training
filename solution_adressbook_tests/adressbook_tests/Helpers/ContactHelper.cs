@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace WebAddressBookTests
 {
     public class ContactHelper : HelperBase
     {
+        private List<Contact> contactsListCache = null;
+        private List<Contact> birthdaysListCache = null;
+
         public ContactHelper(ApplicationManager applicationManager) : base(applicationManager)
         {
         }
@@ -20,25 +22,15 @@ namespace WebAddressBookTests
             applicationManager.NavigationHelper.GoToNewContactPage();
             FillingContactData(contactData);
             FormSubmit();
-            applicationManager.NavigationHelper.ReturnToHomePage();
+            applicationManager.NavigationHelper.ReturnToStartPage();
         }
 
-        public void ModifyFromHomePage(Contact contactData, int index)
+        public void Modify(Contact contactData, int index)
         {
-            applicationManager.NavigationHelper.GoToHomePage();
             ModifyContact(index);
             FillingContactData(contactData);
-            FormUpdate();
-            applicationManager.NavigationHelper.ReturnToHomePage();
-        }
-
-        public void ModifyFromBirthdayPage(Contact contactData, int index)
-        {    
-            applicationManager.NavigationHelper.GoToBirthdayPage();      
-            ModifyContact(index);
-            FillingContactData(contactData);
-            FormUpdate();
-            applicationManager.NavigationHelper.ReturnToHomePage();
+            FormUpdate(); 
+            applicationManager.NavigationHelper.ReturnToStartPage();
         }
 
         public void Remove(int index)
@@ -54,24 +46,61 @@ namespace WebAddressBookTests
         }
 
         public List<Contact> GetContactsList()
-        {          
-            List<Contact> contacts = new List<Contact>();
-            
-            By Element = By.XPath("//table[@id='maintable']/tbody/tr");
-            WaitForElementPresent(Element);
-            ICollection<IWebElement> rows = driver.FindElements(Element);
-
-            foreach (IWebElement row in rows)
+        {      
+            if (contactsListCache == null)
             {
-                List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
-                //Если это заголовок таблицы <th>
-                if (cells.Count == 0)
+                contactsListCache = new List<Contact>();
+
+                By Element = By.XPath("//table[@id='maintable']/tbody/tr");
+                WaitForElementPresent(Element);
+                ICollection<IWebElement> rows = driver.FindElements(Element);
+
+                foreach (IWebElement row in rows)
                 {
-                    continue;
+                    List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
+                    //Если это заголовок таблицы <th>
+                    if (cells.Count == 0)
+                    {
+                        continue;
+                    }
+                    contactsListCache.Add(new Contact(cells[2].Text, cells[1].Text)
+                    {
+                        Id = cells[0].FindElement(By.XPath("./input")).GetAttribute("value")
+                    }) ;
                 }
-                contacts.Add(new Contact(cells[2].Text, cells[1].Text));
             }
-            return contacts;
+
+            return new List<Contact>(contactsListCache);
+        }
+
+        public List<Contact> GetBirthdaysList()
+        {
+            if (birthdaysListCache == null)
+            {
+                birthdaysListCache = new List<Contact>();
+
+                By Element = By.XPath("//table[@id='birthdays']/tbody/tr");
+                WaitForElementPresent(Element);
+                ICollection<IWebElement> rows = driver.FindElements(Element);
+
+                foreach (IWebElement row in rows)
+                {
+                    List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
+                    //Если это заголовок таблицы <th> или colspan
+                    if (cells.Count < 2)
+                    {
+                        continue;
+                    }
+
+                    string href = cells[6].FindElement(By.XPath("./a")).GetAttribute("href");
+                    birthdaysListCache.Add(new Contact(cells[2].Text, cells[1].Text)
+                    {
+                        Id = href.Substring(href.IndexOf("?id=") + 4)
+                    });
+                }
+            }
+
+            return new List<Contact>(birthdaysListCache);
         }
 
         private void FillingContactData(Contact contactData)
@@ -110,7 +139,6 @@ namespace WebAddressBookTests
 
         public bool IsBirthdaysListEmpty()
         {
-            applicationManager.NavigationHelper.GoToBirthdayPage();
             return !IsElementPresent(By.XPath("//table[@id='birthdays']//tr"));
         }
 
@@ -162,19 +190,36 @@ namespace WebAddressBookTests
         private void FormSubmit()
         {
             driver.FindElement(By.XPath("(//input[@name='submit'])[1]")).Click();
+            contactsListCache = null;
+            birthdaysListCache = null;
         }
 
         private void FormUpdate()
         {
             driver.FindElement(By.XPath("(//input[@name='update'])[1]")).Click();
+            contactsListCache = null;
+            birthdaysListCache = null;
         }
 
         private void FormDelete()
         {
             driver.FindElement(By.XPath("//input[@value='Delete']")).Click();
+            contactsListCache = null;
+            birthdaysListCache = null;
             Assert.IsTrue(Regex.IsMatch(CloseAlertAndGetItsText(true), "^Delete \\d* addresses[\\s\\S]$"));
-
             WaitForElementPresent(By.XPath("//div[@class='msgbox'][contains(text(),'Record successful deleted')]"));
+        }
+
+        public void InitContactsListAction()
+        {
+            applicationManager.NavigationHelper.GoToHomePage();
+            applicationManager.NavigationHelper.SetStartPage();
+        }
+
+        public void InitBirthdaysListAction()
+        {
+            applicationManager.NavigationHelper.GoToBirthdayPage();
+            applicationManager.NavigationHelper.SetStartPage();
         }
     }
 }

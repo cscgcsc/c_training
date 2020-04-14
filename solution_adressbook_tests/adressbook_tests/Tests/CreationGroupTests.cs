@@ -10,7 +10,7 @@ namespace WebAddressBookTests
         [Test]
         public void CreateGroup()
         {
-            applicationManager.NavigationHelper.GoToGroupPage();
+            applicationManager.GroupHelper.InitGroupsListAction();
 
             Group groupData = new Group("Test groupname")
             {

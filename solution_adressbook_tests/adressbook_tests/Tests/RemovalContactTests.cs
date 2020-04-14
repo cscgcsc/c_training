@@ -9,13 +9,14 @@ namespace WebAddressBookTests
         [Test]
         public void RemoveContact()
         {
-            applicationManager.NavigationHelper.GoToHomePage();
+            applicationManager.ContactHelper.InitContactsListAction();
             if (applicationManager.ContactHelper.IsContactsListEmpty())
             {
                 applicationManager.ContactHelper.Create(new Contact("Ivanov", "Ivan"));
             }
 
             List<Contact> oldContactsList = applicationManager.ContactHelper.GetContactsList();
+            string deletedId = oldContactsList[0].Id;
             oldContactsList.RemoveAt(0);
             oldContactsList.Sort();
  
@@ -23,13 +24,18 @@ namespace WebAddressBookTests
             List<Contact> newContactsList = applicationManager.ContactHelper.GetContactsList();
             newContactsList.Sort();
 
-            Assert.AreEqual(oldContactsList, newContactsList);  
+            Assert.AreEqual(oldContactsList, newContactsList); 
+            
+            foreach(Contact contact in newContactsList)
+            {
+                Assert.AreNotEqual(deletedId, contact.Id);
+            }
         }
 
         [Test]
         public void RemoveAllContacts()
         {
-            applicationManager.NavigationHelper.GoToHomePage();
+            applicationManager.ContactHelper.InitContactsListAction();
             if (applicationManager.ContactHelper.IsContactsListEmpty())
             {
                 applicationManager.ContactHelper.Create(new Contact("Ivanov", "Ivan"));

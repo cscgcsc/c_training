@@ -9,13 +9,14 @@ namespace WebAddressBookTests
         [Test]
         public void RemoveGroup()
         {
-            applicationManager.NavigationHelper.GoToGroupPage();
+            applicationManager.GroupHelper.InitGroupsListAction();
             if (applicationManager.GroupHelper.IsGroupsListEmpty())
             {
                 applicationManager.GroupHelper.Create(new Group("Test groupname"));
             }
 
             List<Group> oldGroupsList = applicationManager.GroupHelper.GetGroupsList();
+            string deletedId = oldGroupsList[0].Id;
             oldGroupsList.RemoveAt(0);
             oldGroupsList.Sort();
 
@@ -23,7 +24,12 @@ namespace WebAddressBookTests
             List<Group> newGroupsList = applicationManager.GroupHelper.GetGroupsList();
             newGroupsList.Sort();
 
-            Assert.AreEqual(oldGroupsList, newGroupsList);     
+            Assert.AreEqual(oldGroupsList, newGroupsList);
+
+            foreach (Group group in newGroupsList)
+            {
+                Assert.AreNotEqual(deletedId, group.Id);
+            }
         }
     }
 }

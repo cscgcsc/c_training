@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WebAddressBookTests
 {
@@ -10,6 +6,7 @@ namespace WebAddressBookTests
     {
         private string firstname;        
         private string lastname;
+
         public string Middlename { get; set; }
         public string Nickname { get; set; }
         public string Title { get; set; }
@@ -32,6 +29,7 @@ namespace WebAddressBookTests
         public string Address2 { get; set; }
         public string Phone2 { get; set; }
         public string Notes { get; set; }
+        public string Id { get; set; }
 
         public Contact(string firstname, string lastname)
         {

@@ -7,6 +7,8 @@ namespace WebAddressBookTests
     public class NavigationHelper : HelperBase
     {
 
+        private string startURL;
+
         public NavigationHelper(ApplicationManager applicationManager) : base(applicationManager)
         {
         }
@@ -80,6 +82,21 @@ namespace WebAddressBookTests
             By Element = By.LinkText("add new");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();
+        }
+
+        public void ReturnToStartPage()
+        {
+            if(startURL == null)
+            {
+                GoToHomePage();
+                return;
+            }
+            driver.Navigate().GoToUrl(startURL);         
+        }
+
+        public void SetStartPage()
+        {
+            startURL = driver.Url;
         }
     }
 }

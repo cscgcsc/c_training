@@ -9,7 +9,7 @@ namespace WebAddressBookTests
         [Test]
         public void ModifyGroup()
         {
-            applicationManager.NavigationHelper.GoToGroupPage();
+            applicationManager.GroupHelper.InitGroupsListAction();
             if (applicationManager.GroupHelper.IsGroupsListEmpty())
             {
                 applicationManager.GroupHelper.Create(new Group("Test groupname"));
@@ -29,7 +29,15 @@ namespace WebAddressBookTests
             List<Group> newGroupsList = applicationManager.GroupHelper.GetGroupsList();
             newGroupsList.Sort();
 
-            Assert.AreEqual(oldGroupsList, newGroupsList);           
+            Assert.AreEqual(oldGroupsList, newGroupsList);
+
+            foreach (Group newGroup in newGroupsList)
+            {
+                if (newGroup.Id == oldGroupsList[0].Id)
+                {
+                    Assert.AreEqual(newGroup.Groupname, oldGroupsList[0].Groupname);
+                }
+            }
         }
     }
 }
