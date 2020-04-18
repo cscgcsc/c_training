@@ -18,9 +18,27 @@ namespace WebAddressBookTests
             Contact contactData = new Contact("Petr", "Petrov")
             {
                 Middlename = "Petrovich",
-                Birthday = "25",
-                Birthmonth = "May",
-                Birthyear = "1985"
+                Nickname = "Petrusha",
+                Birthday = "2",
+                Birthmonth = "January",
+                Birthyear = "1985",
+                Anniversaryday = "20",
+                Anniversarymonth = "September",
+                Anniversaryyear = "2010",
+                Title = "Title name 2",
+                Company = "Company name 2",
+                Address = "Moscow, Tvardovskogo 987/6, office 543",
+                Home = "84959876543",
+                Mobile = "+7 (916) 987-65-43",
+                Work = "99-88-77",
+                Fax = "84950987654",
+                Email = "test1@yandex.ru",
+                Email2 = "test2@yandex.ru",
+                Email3 = "test3@yandex.ru",
+                Homepage = "https://www.test.ru/",
+                Address2 = "Moscow, Karla Marksa 987-65",
+                Phone2 = "+7 (902) 987-65-43",
+                Notes = "Text1 text1 text1"
             };
 
             List<Contact> oldContactsList = applicationManager.ContactHelper.GetContactsList();
@@ -38,8 +56,8 @@ namespace WebAddressBookTests
             {
                 if(newContact.Id == oldContactsList[0].Id)
                 {
-                    Assert.AreEqual(newContact.Firstname, oldContactsList[0].Firstname);
-                    Assert.AreEqual(newContact.Lastname, oldContactsList[0].Lastname);
+                    Assert.AreEqual(oldContactsList[0].Firstname, newContact.Firstname);
+                    Assert.AreEqual(oldContactsList[0].Lastname, newContact.Lastname);
                 }                   
             }
         }
@@ -60,8 +78,9 @@ namespace WebAddressBookTests
                 Birthmonth = "January",
                 Birthyear = "1900"                                   
             };
-
+            StartCalculationRunTime();
             List<Contact> oldBirthdaysList = applicationManager.ContactHelper.GetBirthdaysList();
+            StopCalculationRunTime();
             oldBirthdaysList[0].Firstname = contactData.Firstname;
             oldBirthdaysList[0].Lastname = contactData.Middlename + " " + contactData.Lastname;
             oldBirthdaysList.Sort();
@@ -76,10 +95,10 @@ namespace WebAddressBookTests
             {
                 if (newContact.Id == oldBirthdaysList[0].Id)
                 {
-                    Assert.AreEqual(newContact.Firstname, oldBirthdaysList[0].Firstname);
-                    Assert.AreEqual(newContact.Lastname, oldBirthdaysList[0].Lastname);
+                    Assert.AreEqual(oldBirthdaysList[0].Firstname, newContact.Firstname);
+                    Assert.AreEqual(oldBirthdaysList[0].Lastname, newContact.Lastname);
                 }
             }        
-        }
+        }     
     }
 }

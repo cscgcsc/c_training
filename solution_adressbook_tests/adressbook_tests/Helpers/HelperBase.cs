@@ -84,5 +84,16 @@ namespace WebAddressBookTests
                 new SelectElement(driver.FindElement(element)).SelectByText(value);
             }
         }
+
+        protected int GetMonthNumber(string monthName)
+        {
+            if (string.IsNullOrEmpty(monthName))
+            {
+                return 0;
+            }
+            string[] monthNames = new System.Globalization.CultureInfo("en-US").DateTimeFormat.MonthNames;
+
+            return Array.IndexOf(monthNames, monthName) + 1;
+        }
     }
 }

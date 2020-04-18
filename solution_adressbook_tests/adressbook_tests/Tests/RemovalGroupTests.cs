@@ -28,7 +28,7 @@ namespace WebAddressBookTests
 
             foreach (Group group in newGroupsList)
             {
-                Assert.AreNotEqual(deletedId, group.Id);
+                Assert.AreNotEqual(group.Id, deletedId);
             }
         }
     }

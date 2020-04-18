@@ -27,9 +27,9 @@ namespace WebAddressBookTests
 
         public void Modify(Contact contactData, int index)
         {
-            ModifyContact(index);
+            OpenEditForm(index);
             FillingContactData(contactData);
-            FormUpdate(); 
+            FormUpdate();
             applicationManager.NavigationHelper.ReturnToStartPage();
         }
 
@@ -46,7 +46,7 @@ namespace WebAddressBookTests
         }
 
         public List<Contact> GetContactsList()
-        {      
+        {
             if (contactsListCache == null)
             {
                 contactsListCache = new List<Contact>();
@@ -58,15 +58,17 @@ namespace WebAddressBookTests
                 foreach (IWebElement row in rows)
                 {
                     List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
+                    
                     //Если это заголовок таблицы <th>
-                    if (cells.Count == 0)
+                    if(cells.Count == 0)
                     {
                         continue;
                     }
+
                     contactsListCache.Add(new Contact(cells[2].Text, cells[1].Text)
                     {
                         Id = cells[0].FindElement(By.XPath("./input")).GetAttribute("value")
-                    }) ;
+                    });
                 }
             }
 
@@ -86,6 +88,7 @@ namespace WebAddressBookTests
                 foreach (IWebElement row in rows)
                 {
                     List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
+
                     //Если это заголовок таблицы <th> или colspan
                     if (cells.Count < 2)
                     {
@@ -101,6 +104,70 @@ namespace WebAddressBookTests
             }
 
             return new List<Contact>(birthdaysListCache);
+        }
+
+        public Contact GetContactInformationFromTable(int index)
+        {
+            By Element = By.XPath("//table[@id='maintable']/tbody/tr[@name='entry'][" + (index + 1) + "]");
+            //WaitForElementPresent(Element);
+            IWebElement row = driver.FindElement(Element);
+
+            List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
+            return new Contact(cells[2].Text, cells[1].Text)
+            {
+                Address = cells[3].Text,
+                AllEmail = cells[4].Text,
+                AllPhones = cells[5].Text
+            };
+        }
+
+        public Contact GetContactInformationFromBirthdaysTable(int index)
+        {
+            By Element = By.XPath("//table[@id='birthdays']/tbody/tr[contains(@class, 'odd') or contains(@class ,'even')][" + (index + 1) + "]");
+            //WaitForElementPresent(Element);
+            IWebElement row = driver.FindElement(Element);
+
+            List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
+            return new Contact(cells[2].Text, "")
+            {
+                Initial = cells[1].Text,
+                Age = cells[3].Text,
+                Email = cells[4].Text,
+                Home = cells[5].Text               
+            };
+        }
+
+        public Contact GetContactInformationFromEditForm(int index)
+        {
+            OpenEditForm(index);          
+
+            return new Contact(
+                driver.FindElement(By.XPath("//input[@name='firstname']")).GetAttribute("value"), 
+                driver.FindElement(By.XPath("//input[@name='lastname']")).GetAttribute("value"))
+            {
+                Middlename = driver.FindElement(By.XPath("//input[@name='middlename']")).GetAttribute("value"),
+                Nickname = driver.FindElement(By.XPath("//input[@name='nickname']")).GetAttribute("value"),
+                Birthday = driver.FindElement(By.XPath("//select[@name='bday']/option[@selected]")).GetAttribute("value"),
+                Birthmonth = driver.FindElement(By.XPath("//select[@name='bmonth']/option[@selected]")).GetAttribute("value"),
+                Birthyear = driver.FindElement(By.XPath("//input[@name='byear']")).GetAttribute("value"),
+                Anniversaryday = driver.FindElement(By.XPath("//select[@name='aday']/option[@selected]")).GetAttribute("value"),
+                Anniversarymonth = driver.FindElement(By.XPath("//select[@name='amonth']/option[@selected]")).GetAttribute("value"),
+                Anniversaryyear = driver.FindElement(By.XPath("//input[@name='ayear']")).GetAttribute("value"),
+                Title = driver.FindElement(By.XPath("//input[@name='title']")).GetAttribute("value"),
+                Company = driver.FindElement(By.XPath("//input[@name='company']")).GetAttribute("value"),
+                Address = driver.FindElement(By.XPath("//textarea[@name='address']")).Text,
+                Home = driver.FindElement(By.XPath("//input[@name='home']")).GetAttribute("value"),
+                Mobile = driver.FindElement(By.XPath("//input[@name='mobile']")).GetAttribute("value"),
+                Work = driver.FindElement(By.XPath("//input[@name='work']")).GetAttribute("value"),
+                Fax = driver.FindElement(By.XPath("//input[@name='fax']")).GetAttribute("value"),
+                Email = driver.FindElement(By.XPath("//input[@name='email']")).GetAttribute("value"),
+                Email2 = driver.FindElement(By.XPath("//input[@name='email2']")).GetAttribute("value"),
+                Email3 = driver.FindElement(By.XPath("//input[@name='email3']")).GetAttribute("value"),
+                Homepage = driver.FindElement(By.XPath("//input[@name='homepage']")).GetAttribute("value"),
+                Address2 = driver.FindElement(By.XPath("//textarea[@name='address2']")).Text,
+                Phone2 = driver.FindElement(By.XPath("//input[@name='phone2']")).GetAttribute("value"),
+                Notes = driver.FindElement(By.XPath("//textarea[@name='notes']")).Text
+            };
         }
 
         private void FillingContactData(Contact contactData)
@@ -121,7 +188,7 @@ namespace WebAddressBookTests
             Type(By.Name("email3"), contactData.Email3);
             Type(By.Name("homepage"), contactData.Homepage);
             Select(By.Name("bday"), contactData.Birthday);
-            Select(By.Name("bmonth"), contactData.Birthmonth);       
+            Select(By.Name("bmonth"), contactData.Birthmonth);
             Type(By.Name("byear"), contactData.Birthyear);
             Select(By.Name("aday"), contactData.Anniversaryday);
             Select(By.Name("amonth"), contactData.Anniversarymonth);
@@ -142,7 +209,7 @@ namespace WebAddressBookTests
             return !IsElementPresent(By.XPath("//table[@id='birthdays']//tr"));
         }
 
-        private void ModifyContact(int index) 
+        private void OpenEditForm(int index) 
         {
             By Element = By.XPath("(//table//a[contains(@href,'edit.php')])[" + (index + 1) + "]");
             WaitForElementPresent(Element);

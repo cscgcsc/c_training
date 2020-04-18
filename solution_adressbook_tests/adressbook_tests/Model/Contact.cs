@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace WebAddressBookTests
 {
     public class Contact : IEquatable<Contact>, IComparable<Contact>
     {
-        private string firstname;        
-        private string lastname;
+        private string initial;
+        private string allEmail;
+        private string allPhones;
+        private string age;
 
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
         public string Middlename { get; set; }
         public string Nickname { get; set; }
         public string Title { get; set; }
@@ -21,7 +26,7 @@ namespace WebAddressBookTests
         public string Email3 { get; set; }
         public string Homepage { get; set; }
         public string Birthday { get; set; }
-        public string Birthmonth { get; set; } 
+        public string Birthmonth { get; set; }
         public string Birthyear { get; set; }
         public string Anniversaryday { get; set; } 
         public string Anniversarymonth { get; set; }
@@ -33,33 +38,157 @@ namespace WebAddressBookTests
 
         public Contact(string firstname, string lastname)
         {
-            this.firstname  = firstname;
-            this.lastname   = lastname;
+            this.Firstname  = firstname;
+            this.Lastname   = lastname;
         }
 
-        public string Firstname 
+        public string Initial
         {
             get
             {
-                return firstname;
+                if(initial != null)
+                {
+                    return initial;
+                }
+                else
+                {
+                    string result = CleanUpInitial(Middlename);
+                    result += CleanUpInitial(Lastname);
+
+                    return result.Trim();
+                }               
             }
             set
             {
-                firstname = value;
+                initial = value;
             }
         }
 
-        public string Lastname
+        public string Age
         {
             get
             {
-                return lastname;
+                if (age != null)
+                {
+                    return age;
+                }
+
+                if (int.TryParse(Birthyear, out int intBirthyear))
+                {
+                    //Если, кроме года заполнены месяц и день, то попытаемся сделать из этого дату
+                    if (!string.IsNullOrWhiteSpace(Birthday)
+                        && !string.IsNullOrWhiteSpace(Birthmonth)
+                        && DateTime.TryParse(Birthday + " " + Birthmonth + " " + Birthyear, out DateTime birthDate))
+                    {
+                        //Дата корректная, рассчитаем количество лет
+                        return CountNumberOfYears(birthDate);
+                    }
+                    else
+                    {
+                        //Не удалось получить дату или не заполнен месяц/день, тогда рассчитаем количество лет от 1 января
+                        return CountNumberOfYears(new DateTime(intBirthyear, 1, 1));
+                    }
+                }
+                else
+                {
+                    //Год заполнен неверно
+                    return "";
+                }                        
             }
             set
             {
-                lastname = value;
+                age = value;
             }
         }
+
+        public string AllEmail
+        {
+            get
+            {
+                if (allEmail != null)
+                {
+                    return allEmail;
+                }
+                else
+                {
+                    string result = CleanUpEmail(Email);
+                    result += CleanUpEmail(Email2);
+                    result += CleanUpEmail(Email3);
+
+                    return result.Trim();      
+                }
+            }
+            set
+            {
+                allEmail = value;
+            }
+        }
+
+        public string AllPhones
+        {
+            get
+            {
+                if (allPhones != null)
+                {
+                    return allPhones;
+                }
+                else
+                {
+                    string result = CleanUpPhone(Home);
+                    result += CleanUpPhone(Mobile);
+                    result += CleanUpPhone(Work);
+                    result += CleanUpPhone(Phone2);
+
+                    return result.Trim();
+                }
+            }
+            set
+            {
+                allPhones = value;
+            }
+        }
+
+        private string CleanUpPhone(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return "";
+            }
+
+            return Regex.Replace(text, "[ \\-()]", "") + "\r\n";
+        }
+
+        private string CleanUpEmail(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return "";
+            }
+
+            return text.Trim() + "\r\n";
+        }
+
+        private string CleanUpInitial(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return "";
+            }
+
+            return text.Trim() + " ";
+        }
+
+        private string CountNumberOfYears(DateTime birthDate)
+        {
+            int now = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
+            int birth = int.Parse(birthDate.ToString("yyyyMMdd"));
+            int age = (now - birth) / 10000;
+
+            return age.ToString();
+        }
+
+        //Example 2
+        //public string Firstname { get => firstname; set => firstname = value; }
 
         public int CompareTo(Contact other)
         {

@@ -28,7 +28,7 @@ namespace WebAddressBookTests
             
             foreach(Contact contact in newContactsList)
             {
-                Assert.AreNotEqual(deletedId, contact.Id);
+                Assert.AreNotEqual(contact.Id, deletedId);
             }
         }
 
@@ -42,7 +42,7 @@ namespace WebAddressBookTests
             }
 
             applicationManager.ContactHelper.Remove();
-            Assert.IsTrue(applicationManager.ContactHelper.GetContactsList().Count == 0);
+            Assert.IsTrue(applicationManager.ContactHelper.IsContactsListEmpty());
         }
     }
 }

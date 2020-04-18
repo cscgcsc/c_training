@@ -35,7 +35,7 @@ namespace WebAddressBookTests
             {
                 if (newGroup.Id == oldGroupsList[0].Id)
                 {
-                    Assert.AreEqual(newGroup.Groupname, oldGroupsList[0].Groupname);
+                    Assert.AreEqual(oldGroupsList[0].Groupname, newGroup.Groupname);
                 }
             }
         }
