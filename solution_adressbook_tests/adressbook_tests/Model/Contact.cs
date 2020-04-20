@@ -9,6 +9,7 @@ namespace WebAddressBookTests
         private string allEmail;
         private string allPhones;
         private string age;
+        private string anniversary;
 
         public string Firstname { get; set; }
         public string Lastname { get; set; }
@@ -54,7 +55,6 @@ namespace WebAddressBookTests
                 {
                     string result = CleanUpInitial(Middlename);
                     result += CleanUpInitial(Lastname);
-
                     return result.Trim();
                 }               
             }
@@ -98,6 +98,43 @@ namespace WebAddressBookTests
             set
             {
                 age = value;
+            }
+        }
+
+        public string Anniversary
+        {
+            get
+            {
+                if (anniversary != null)
+                {
+                    return anniversary;
+                }
+
+                if (int.TryParse(Anniversaryyear, out int intAnniversaryyear))
+                {
+                    //Если, кроме года заполнены месяц и день, то попытаемся сделать из этого дату
+                    if (!string.IsNullOrWhiteSpace(Anniversaryday)
+                        && !string.IsNullOrWhiteSpace(Anniversarymonth)
+                        && DateTime.TryParse(Anniversaryday + " " + Anniversarymonth + " " + Anniversaryyear, out DateTime anniversaryDate))
+                    {
+                        //Дата корректная, рассчитаем количество лет
+                        return CountNumberOfYears(anniversaryDate);
+                    }
+                    else
+                    {
+                        //Не удалось получить дату или не заполнен месяц/день, тогда рассчитаем количество лет от 1 января
+                        return CountNumberOfYears(new DateTime(intAnniversaryyear, 1, 1));
+                    }
+                }
+                else
+                {
+                    //Год заполнен неверно
+                    return "";
+                }
+            }
+            set
+            {
+                anniversary = value;
             }
         }
 

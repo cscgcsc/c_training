@@ -6,7 +6,7 @@ namespace WebAddressBookTests
     public class ContactInformationTests : AuthorizationTestBase
     {
         [Test]
-        public void TestContactInformationFromHomePage()
+        public void TestContactInformationFromTableHome()
         {
             applicationManager.ContactHelper.InitContactsListAction();
             if (applicationManager.ContactHelper.IsContactsListEmpty())
@@ -26,7 +26,7 @@ namespace WebAddressBookTests
         }
 
         [Test]
-        public void TestContactInformationFromBirthdayPage()
+        public void TestContactInformationFromTableBirthday()
         {
             applicationManager.ContactHelper.InitBirthdaysListAction();
             if (applicationManager.ContactHelper.IsBirthdaysListEmpty())
@@ -42,105 +42,38 @@ namespace WebAddressBookTests
             Assert.AreEqual(contactDataFromTable.Age, contactDataFromForm.Age);
             Assert.AreEqual(contactDataFromTable.Email, contactDataFromForm.Email);
             Assert.AreEqual(contactDataFromTable.Home, contactDataFromForm.Home);
+        }
 
-            //Contact qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "29",
-            //    Birthmonth = "January",
-            //    Birthyear = "1989"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
+        [Test]
+        public void TestContactInformationFromPrintFormHome()
+        {
+            applicationManager.ContactHelper.InitContactsListAction();
+            if (applicationManager.ContactHelper.IsContactsListEmpty())
+            {
+                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
+            }
 
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "",
-            //    Birthmonth = "January",
-            //    Birthyear = "1989"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
+            string printText = applicationManager.ContactHelper.GetContactInformationFromPrintForm(3);
+            Contact contactDataFromForm = applicationManager.ContactHelper.GetContactInformationFromEditForm(3);
+            string concatPrintText = applicationManager.ContactHelper.ConcatPrintInformation(contactDataFromForm);
 
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "29",
-            //    Birthmonth = "",
-            //    Birthyear = "1989"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
+            Assert.AreEqual(printText, concatPrintText);
+        }
 
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "29",
-            //    Birthmonth = "January",
-            //    Birthyear = ""
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
+        [Test]
+        public void TestContactInformationFromPrintFormBirthday()
+        {
+            applicationManager.ContactHelper.InitBirthdaysListAction();
+            if (applicationManager.ContactHelper.IsBirthdaysListEmpty())
+            {
+                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
+            }
 
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "29",
-            //    Birthmonth = "January",
-            //    Birthyear = "qwer"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
+            string printText = applicationManager.ContactHelper.GetContactInformationFromPrintForm(0);
+            Contact contactDataFromForm = applicationManager.ContactHelper.GetContactInformationFromEditForm(0);
+            string concatPrintText = applicationManager.ContactHelper.ConcatPrintInformation(contactDataFromForm);
 
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "29",
-            //    Birthmonth = "January",
-            //    Birthyear = "0038"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
-
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthyear = "1989"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
-
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthmonth = "January"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
-
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "29"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
-
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "31",
-            //    Birthmonth = "February",
-            //    Birthyear = "1989"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
-
-
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "zz",
-            //    Birthmonth = "February",
-            //    Birthyear = "1989"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
-
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "31",
-            //    Birthmonth = "February111",
-            //    Birthyear = "1989"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
-
-            //qwerty = new Contact("q", "w")
-            //{
-            //    Birthday = "31",
-            //    Birthmonth = "February",
-            //    Birthyear = "-"
-            //};
-            //System.Console.WriteLine("Лет: " + qwerty.Age);
+            Assert.AreEqual(printText, concatPrintText);
         }
     }
 }

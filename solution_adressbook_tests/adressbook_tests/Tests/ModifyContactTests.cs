@@ -7,7 +7,7 @@ namespace WebAddressBookTests
     public class ModifyContactTests : AuthorizationTestBase
     {
         [Test]
-        public void ModifyContactFromHomePage()
+        public void ModifyContactHome()
         {
             applicationManager.ContactHelper.InitContactsListAction();
             if (applicationManager.ContactHelper.IsContactsListEmpty())
@@ -63,7 +63,7 @@ namespace WebAddressBookTests
         }
 
         [Test]
-        public void ModifyContactFromBirthdayPage()
+        public void ModifyContactBirthday()
         {
             applicationManager.ContactHelper.InitBirthdaysListAction();
             if (applicationManager.ContactHelper.IsBirthdaysListEmpty())
@@ -78,9 +78,7 @@ namespace WebAddressBookTests
                 Birthmonth = "January",
                 Birthyear = "1900"                                   
             };
-            StartCalculationRunTime();
             List<Contact> oldBirthdaysList = applicationManager.ContactHelper.GetBirthdaysList();
-            StopCalculationRunTime();
             oldBirthdaysList[0].Firstname = contactData.Firstname;
             oldBirthdaysList[0].Lastname = contactData.Middlename + " " + contactData.Lastname;
             oldBirthdaysList.Sort();

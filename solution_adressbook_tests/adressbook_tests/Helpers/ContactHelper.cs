@@ -45,6 +45,7 @@ namespace WebAddressBookTests
             FormDelete();
         }
 
+        //Таблицы
         public List<Contact> GetContactsList()
         {
             if (contactsListCache == null)
@@ -109,7 +110,6 @@ namespace WebAddressBookTests
         public Contact GetContactInformationFromTable(int index)
         {
             By Element = By.XPath("//table[@id='maintable']/tbody/tr[@name='entry'][" + (index + 1) + "]");
-            //WaitForElementPresent(Element);
             IWebElement row = driver.FindElement(Element);
 
             List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
@@ -124,7 +124,6 @@ namespace WebAddressBookTests
         public Contact GetContactInformationFromBirthdaysTable(int index)
         {
             By Element = By.XPath("//table[@id='birthdays']/tbody/tr[contains(@class, 'odd') or contains(@class ,'even')][" + (index + 1) + "]");
-            //WaitForElementPresent(Element);
             IWebElement row = driver.FindElement(Element);
 
             List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
@@ -137,6 +136,55 @@ namespace WebAddressBookTests
             };
         }
 
+        public bool IsContactsListEmpty()
+        {
+            ClearContactGroupFilter();
+            return driver.FindElement(By.XPath("//span[@id='search_count']")).Text == "0";
+        }
+
+        public bool IsBirthdaysListEmpty()
+        {
+            return !IsElementPresent(By.XPath("//table[@id='birthdays']//tr"));
+        }
+
+        //Действия в таблице
+        private void OpenEditForm(int index)
+        {
+            By Element = By.XPath("(//table//a[contains(@href,'edit.php')])[" + (index + 1) + "]");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();
+        }
+
+        private void OpenPrintForm(int index)
+        {
+            By Element = By.XPath("(//table//a[contains(@href,'view.php')])[" + (index + 1) + "]");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();
+        }
+
+        private void SelectContact(int index)
+        {
+            By Element = By.XPath("(//input[@name='selected[]'])[" + (index + 1) + "]");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();
+        }
+
+        private void SelectAllContacts()
+        {
+            By Element = By.XPath("//input[@id='MassCB']");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();
+        }
+
+        private void ClearContactGroupFilter()
+        {
+            By Element = By.XPath("//select[@name='group']");
+            WaitForElementPresent(Element);
+            new SelectElement(driver.FindElement(Element)).SelectByText("[all]");
+            driver.FindElement(By.XPath("//option[@value='']")).Click();
+        }
+
+        //Формы
         public Contact GetContactInformationFromEditForm(int index)
         {
             OpenEditForm(index);          
@@ -170,6 +218,17 @@ namespace WebAddressBookTests
             };
         }
 
+        public string GetContactInformationFromPrintForm(int index)
+        {
+            OpenPrintForm(index);
+            string printText = driver.FindElement(By.XPath("//div[@id='content']")).Text;
+            printText = Regex.Replace(printText, @"[\r\n]{2,}\s*[\r\n]", "\r\n");
+
+            applicationManager.NavigationHelper.ReturnToStartPage();
+
+            return printText;
+        }
+
         private void FillingContactData(Contact contactData)
         {
             Type(By.Name("firstname"), contactData.Firstname);
@@ -198,62 +257,7 @@ namespace WebAddressBookTests
             Type(By.Name("notes"), contactData.Notes);
         }
 
-        public bool IsContactsListEmpty()
-        {
-            ClearContactGroupFilter();
-            return driver.FindElement(By.XPath("//span[@id='search_count']")).Text == "0";
-        }
-
-        public bool IsBirthdaysListEmpty()
-        {
-            return !IsElementPresent(By.XPath("//table[@id='birthdays']//tr"));
-        }
-
-        private void OpenEditForm(int index) 
-        {
-            By Element = By.XPath("(//table//a[contains(@href,'edit.php')])[" + (index + 1) + "]");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
-        }
-
-        private void SelectContact(int index)
-        {
-            By Element = By.XPath("(//input[@name='selected[]'])[" + (index + 1) + "]");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();      
-        }
-
-        private void SelectAllContacts()
-        {
-            By Element = By.XPath("//input[@id='MassCB']");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
-        }
-
-        public Contact GetDefaultContactData()
-        {
-            Contact contactData = new Contact("Ivan", "Ivanov")
-            {
-                Birthday = "1",
-                Birthmonth = "January",
-                Birthyear = "1900"
-            };
-            return contactData;
-        }
-
-        private void ClearContactGroupFilter()
-        {
-            By Element = By.XPath("//select[@name='group']");
-            WaitForElementPresent(Element);
-            new SelectElement(driver.FindElement(Element)).SelectByText("[all]");
-            driver.FindElement(By.XPath("//option[@value='']")).Click();
-        }
-
-        public bool IsContactListEmpty()
-        {
-            return driver.FindElement(By.XPath("//span[@id='search_count']")).Text == "0";
-        }
-
+        //Действия на форме
         private void FormSubmit()
         {
             driver.FindElement(By.XPath("(//input[@name='submit'])[1]")).Click();
@@ -275,6 +279,165 @@ namespace WebAddressBookTests
             birthdaysListCache = null;
             Assert.IsTrue(Regex.IsMatch(CloseAlertAndGetItsText(true), "^Delete \\d* addresses[\\s\\S]$"));
             WaitForElementPresent(By.XPath("//div[@class='msgbox'][contains(text(),'Record successful deleted')]"));
+        }
+
+        //Служебные
+        public string ConcatPrintInformation(Contact contactData)
+        {
+            string result = "";
+            
+            result += CleanUp(contactData.Firstname, false) + " ";
+            result += CleanUp(contactData.Initial);
+            result = CleanUp(result);
+
+            result += CleanUp(contactData.Nickname);
+            result += CleanUp(contactData.Title);
+            result += CleanUp(contactData.Company);
+            result += CleanUpMultilineText(contactData.Address);         
+
+            //Телефоны
+            if (!string.IsNullOrEmpty(contactData.Home))
+            {
+                result += CleanUp(("H: " + CleanUp(contactData.Home, false)));
+            }
+
+            if (!string.IsNullOrEmpty(contactData.Mobile))
+            {
+                result += CleanUp(("M: " + CleanUp(contactData.Mobile, false)));
+            }
+
+            if (!string.IsNullOrEmpty(contactData.Work))
+            {
+                result += CleanUp(("W: " + CleanUp(contactData.Work, false)));
+            }
+
+            if (!string.IsNullOrEmpty(contactData.Fax))
+            {
+                result += CleanUp(("F: " + CleanUp(contactData.Fax, false)));
+            }
+
+            //Почта
+            result += CleanUp(contactData.AllEmail);
+
+            //Сайт
+            if (!string.IsNullOrEmpty(contactData.Homepage))
+            {
+                result += CleanUp("Homepage:\r\n" + CleanUp(Regex.Replace(contactData.Homepage, "(http://)|(https://)", ""), false));
+            }          
+
+            //День рождения
+            string temp = "";
+            if (!string.IsNullOrWhiteSpace(contactData.Birthday) 
+                && contactData.Birthday != "0")
+            {
+                temp += contactData.Birthday + ". ";
+            }
+
+            if (!string.IsNullOrWhiteSpace(contactData.Birthmonth)
+                && contactData.Birthmonth != "-")
+            {
+                temp += contactData.Birthmonth + " ";
+            }
+
+            if (!string.IsNullOrEmpty(contactData.Birthyear))
+            {
+                temp += contactData.Birthyear.Trim() + " ";
+            }
+
+            if (!string.IsNullOrEmpty(contactData.Age))
+            {
+                temp += "(" + contactData.Age + ")";
+            }
+
+            if(temp != "")
+            {
+                result += CleanUp("Birthday " + temp);
+            }
+
+            //Юбилей
+            temp = "";
+            if (!string.IsNullOrWhiteSpace(contactData.Anniversaryday)
+                && contactData.Anniversaryday != "0")
+            {
+                temp += contactData.Anniversaryday + ". ";
+            }
+
+            if (!string.IsNullOrWhiteSpace(contactData.Anniversarymonth)
+                && contactData.Anniversarymonth != "-")
+            {
+                temp += contactData.Anniversarymonth + " ";
+            }
+
+            if (!string.IsNullOrEmpty(contactData.Anniversaryyear))
+            {
+                temp += contactData.Anniversaryyear.Trim() + " ";
+            }
+
+            if (!string.IsNullOrEmpty(contactData.Anniversary))
+            {
+                temp += "(" + contactData.Anniversary + ")";
+            }
+
+            if (temp != "")
+            {
+                result += CleanUp("Anniversary " + temp);
+            }
+
+            //Адрес
+            result += CleanUpMultilineText(contactData.Address2);
+
+            //Телефон
+            if (!string.IsNullOrEmpty(contactData.Phone2))
+            {
+                result += CleanUp("P: " + CleanUp(contactData.Phone2, false));
+            }
+
+            //Заметка
+            result += CleanUpMultilineText(contactData.Notes);
+            
+            return result.Trim();
+        }
+
+        public string CleanUp(string text, bool lineBreak = true)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return "";
+            }
+
+            if (lineBreak)
+            {
+                //несколько пробелов переделаем в один
+                return Regex.Replace(text.Trim(), @"[ ]{2,}", " ") + "\r\n";
+            }
+
+            return Regex.Replace(text.Trim(), @"[ ]{2,}", " ");
+        }
+
+        public string CleanUpMultilineText(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return "";
+            }
+            //несколько пробелов переделаем в один
+            text = Regex.Replace(text, @"[ ]{2,}", " ");
+            //удалим пробелы в начале и конце каждой строки 
+            text = Regex.Replace(text, @"([ ]*\r\n[ ]*)", "\r\n");
+            //несколько переносов строк переделаем в один
+            text = Regex.Replace(text, @"[\r\n]{2,}\s*[\r\n]", "\r\n");
+            return text.Trim() + "\r\n";
+        }
+
+        public Contact GetDefaultContactData()
+        {
+            Contact contactData = new Contact("Ivan", "Ivanov")
+            {
+                Birthday = "1",
+                Birthmonth = "January",
+                Birthyear = "1900"
+            };
+            return contactData;
         }
 
         public void InitContactsListAction()

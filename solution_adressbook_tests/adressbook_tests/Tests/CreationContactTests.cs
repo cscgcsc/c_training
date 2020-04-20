@@ -47,25 +47,5 @@ namespace WebAddressBookTests
 
             Assert.AreEqual(oldContactsList, newContactsList);           
         }
-
-
-        //[Test]
-        //public void CreateContact2()
-        //{
-        //    Contact contactData = new Contact("Ivan", "Ivanov")
-        //    {
-        //        Middlename = "Ivanovich",
-        //        Nickname = "Vanechka",
-        //        Birthday = "30",
-        //        Birthmonth = "July",
-        //        Birthyear = "1987"
-        //    };
-
-        //    for (int i = 0; i < 70; i++)
-        //    {
-        //        applicationManager.ContactHelper.Modify(contactData, i);
-        //    }
-          
-        //}
     }
 }
