@@ -53,8 +53,8 @@ namespace WebAddressBookTests
                 applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
             }
 
-            string printText = applicationManager.ContactHelper.GetContactInformationFromPrintForm(3);
-            Contact contactDataFromForm = applicationManager.ContactHelper.GetContactInformationFromEditForm(3);
+            string printText = applicationManager.ContactHelper.GetContactInformationFromPrintForm(0);
+            Contact contactDataFromForm = applicationManager.ContactHelper.GetContactInformationFromEditForm(0);
             string concatPrintText = applicationManager.ContactHelper.ConcatPrintInformation(contactDataFromForm);
 
             Assert.AreEqual(printText, concatPrintText);

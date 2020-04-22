@@ -239,7 +239,7 @@ namespace WebAddressBookTests
             Type(By.Name("company"), contactData.Company);
             Type(By.Name("address"), contactData.Address);
             Type(By.Name("home"), contactData.Home);
-            Type(By.Name("mobile"), contactData.Mobile);
+            Type(By.Name("mobile"), contactData.Mobile);                                          
             Type(By.Name("work"), contactData.Work);
             Type(By.Name("fax"), contactData.Fax);
             Type(By.Name("email"), contactData.Email);

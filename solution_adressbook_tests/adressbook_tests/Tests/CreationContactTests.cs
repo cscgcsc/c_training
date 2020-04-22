@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace WebAddressBookTests
@@ -6,34 +7,48 @@ namespace WebAddressBookTests
     [TestFixture]
     public class CreationContactTests : AuthorizationTestBase
     {
-        [Test]
-        public void CreateContact()
+        public static List<Contact> RandomContactDataProvider()
         {
-            Contact contactData = new Contact("Ivan", "Ivanov")
+            List<Contact> contactDataList = new List<Contact>();
+
+            for (int i = 0; i < 5; i++)
             {
-                Middlename = "Ivanovich",
-                Nickname = "Vanechka",
-                Birthday = "30",
-                Birthmonth = "July",
-                Birthyear = "1990",
-                Anniversaryday = "10",
-                Anniversarymonth = "May",
-                Anniversaryyear = "1995",
-                Title = "Title name",
-                Company = "Company name",
-                Address = "Moscow, Arbat 123/4, office 567",
-                Home = "84951234567",
-                Mobile = "+7 (916) 123-45-67",
-                Work = "33-44-55",
-                Fax = "84950123456",
-                Email = "qwerty1@yandex.ru",
-                Email2 = "qwerty2@yandex.ru",
-                Email3 = "qwerty3@yandex.ru",
-                Homepage = "https://www.qwerty.ru/",               
-                Address2 = "Moscow, Tallinskaya 123-45",
-                Phone2 = "+7 (902) 987-65-43",
-                Notes = "Text text text"
-            };
+                DateTime birthDate = GenerateRandomDate();
+                DateTime anniversaryDate = GenerateRandomDate();
+
+                contactDataList.Add(new Contact(GenerateRandomString(20), GenerateRandomString(20))
+                {
+                    Middlename = GenerateRandomString(20),
+                    Nickname = GenerateRandomString(20),
+                    Birthday = GetFormatDay(birthDate),
+                    Birthmonth = GetFormatMonth(birthDate),
+                    Birthyear = birthDate.ToString("yyyy"),
+                    Anniversaryday = GetFormatDay(anniversaryDate),
+                    Anniversarymonth = GetFormatMonth(anniversaryDate),
+                    Anniversaryyear = anniversaryDate.ToString("yyyy"),
+                    Title = GenerateRandomString(20),
+                    Company = GenerateRandomString(20),
+                    Address = GenerateRandomString(250),
+                    Home = GenerateRandomString(20),
+                    Mobile = GenerateRandomString(20),
+                    Work = GenerateRandomString(20),
+                    Fax = GenerateRandomString(20),
+                    Email = GenerateRandomString(20),
+                    Email2 = GenerateRandomString(20),
+                    Email3 = GenerateRandomString(20),
+                    Homepage = GenerateRandomString(20),
+                    Address2 = GenerateRandomString(250),
+                    Phone2 = GenerateRandomString(20),
+                    Notes = GenerateRandomString(250)
+                }); ;
+            }
+
+            return contactDataList;
+        }
+
+        [Test, TestCaseSource("RandomContactDataProvider")]
+        public void CreateContact(Contact contactData)
+        {
             StartCalculationRunTime();
             List<Contact> oldContactsList = applicationManager.ContactHelper.GetContactsList();
             StopCalculationRunTime();
