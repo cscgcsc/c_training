@@ -13,6 +13,11 @@ namespace WebAddressBookTests
             this.groupname = groupname;
         }
 
+        //пустой конструктор для XmlSerializer
+        public Group()
+        {          
+        }
+
         public string Groupheader { get => groupheader; set => groupheader = value; }
         public string Groupfooter { get => groupfooter; set => groupfooter = value; }
         public string Groupname { get => groupname; set => groupname = value; }

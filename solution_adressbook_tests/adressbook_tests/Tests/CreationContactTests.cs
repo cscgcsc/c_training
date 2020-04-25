@@ -9,14 +9,14 @@ namespace WebAddressBookTests
     {
         public static List<Contact> RandomContactDataProvider()
         {
-            List<Contact> contactDataList = new List<Contact>();
+            List<Contact> contactsDataList = new List<Contact>();
 
             for (int i = 0; i < 5; i++)
             {
                 DateTime birthDate = GenerateRandomDate();
                 DateTime anniversaryDate = GenerateRandomDate();
 
-                contactDataList.Add(new Contact(GenerateRandomString(20), GenerateRandomString(20))
+                contactsDataList.Add(new Contact(GenerateRandomString(20), GenerateRandomString(20))
                 {
                     Middlename = GenerateRandomString(20),
                     Nickname = GenerateRandomString(20),
@@ -43,7 +43,7 @@ namespace WebAddressBookTests
                 }); ;
             }
 
-            return contactDataList;
+            return contactsDataList;
         }
 
         [Test, TestCaseSource("RandomContactDataProvider")]

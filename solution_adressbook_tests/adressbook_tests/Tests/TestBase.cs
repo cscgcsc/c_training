@@ -38,7 +38,7 @@ namespace WebAddressBookTests
 
         public static int GenerateRandomNumber(int maxNumber)
         {
-            return rnd.Next(1, maxNumber);
+            return rnd.Next(0, maxNumber);
         }
 
         public static string GetRandomMonth()

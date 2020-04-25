@@ -43,6 +43,10 @@ namespace WebAddressBookTests
             this.Lastname   = lastname;
         }
 
+        //пустой конструктор для XmlSerializer
+        public Contact()
+        {
+        }
         public string Initial
         {
             get
