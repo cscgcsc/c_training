@@ -9,7 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace WebAddressBookTests
 {
     [TestFixture]
-    public class CreationGroupTests : AuthorizationTestBase
+    public class CreationGroupTests : GroupTestBase
     {
         public static List<Group> RandomGroupDataProvider()
         {
@@ -81,6 +81,7 @@ namespace WebAddressBookTests
             workbook.Close();
             //убираем окно excel
             app.Visible = false;
+
             return groupsDataList;
         }
 
@@ -88,12 +89,27 @@ namespace WebAddressBookTests
         public void CreateGroup(Group groupData)
         {
             applicationManager.GroupHelper.InitGroupsListAction();
+            List<Group> oldGroupsList = Group.GetAll();
+            oldGroupsList.Add(groupData);
+                   
+            applicationManager.GroupHelper.Create(groupData);
+            List<Group> newGroupsList = Group.GetAll();
+            oldGroupsList.Sort();
+            newGroupsList.Sort();
+
+            Assert.AreEqual(oldGroupsList, newGroupsList);
+        }
+
+        //[Test, TestCaseSource("GroupsDataFromCsvProvider")]
+        public void OldCreateGroup(Group groupData)
+        {
+            applicationManager.GroupHelper.InitGroupsListAction();
 
             List<Group> oldGroupsList = applicationManager.GroupHelper.GetGroupsList();
             oldGroupsList.Add(groupData);
             oldGroupsList.Sort();
 
-            applicationManager.GroupHelper.Create(groupData);            
+            applicationManager.GroupHelper.Create(groupData);
             List<Group> newGroupsList = applicationManager.GroupHelper.GetGroupsList();
             newGroupsList.Sort();
 

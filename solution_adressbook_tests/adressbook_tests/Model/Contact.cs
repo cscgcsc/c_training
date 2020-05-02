@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using LinqToDB.Mapping;
+using System.Linq;
 
 namespace WebAddressBookTests
 {
+    [Table("addressbook")]
     public class Contact : IEquatable<Contact>, IComparable<Contact>
     {
         private string initial;
@@ -11,31 +15,31 @@ namespace WebAddressBookTests
         private string age;
         private string anniversary;
 
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
-        public string Middlename { get; set; }
-        public string Nickname { get; set; }
-        public string Title { get; set; }
-        public string Company { get; set; }
-        public string Address { get; set; }
-        public string Home { get; set; }
-        public string Mobile { get; set; }
-        public string Work { get; set; }
-        public string Fax { get; set; }
-        public string Email { get; set; }
-        public string Email2 { get; set; }
-        public string Email3 { get; set; }
-        public string Homepage { get; set; }
-        public string Birthday { get; set; }
-        public string Birthmonth { get; set; }
-        public string Birthyear { get; set; }
-        public string Anniversaryday { get; set; } 
-        public string Anniversarymonth { get; set; }
-        public string Anniversaryyear { get; set; }
-        public string Address2 { get; set; }
-        public string Phone2 { get; set; }
-        public string Notes { get; set; }
-        public string Id { get; set; }
+        [Column("firstname")] public string Firstname { get; set; }
+        [Column("lastname")] public string Lastname { get; set; }
+        [Column("middlename")] public string Middlename { get; set; }
+        [Column("nickname")] public string Nickname { get; set; }
+        [Column("title")] public string Title { get; set; }
+        [Column("company")] public string Company { get; set; }
+        [Column("address")] public string Address { get; set; }
+        [Column("home")] public string Home { get; set; }
+        [Column("mobile")] public string Mobile { get; set; }
+        [Column("work")] public string Work { get; set; }
+        [Column("fax")] public string Fax { get; set; }
+        [Column("email")] public string Email { get; set; }
+        [Column("email2")] public string Email2 { get; set; }
+        [Column("email3")] public string Email3 { get; set; }
+        [Column("homepage")] public string Homepage { get; set; }
+        [Column("bday")] public string Birthday { get; set; }
+        [Column("bmonth")] public string Birthmonth { get; set; }
+        [Column("byear")] public string Birthyear { get; set; }
+        [Column("aday")] public string Anniversaryday { get; set; }
+        [Column("amonth")] public string Anniversarymonth { get; set; }
+        [Column("ayear")] public string Anniversaryyear { get; set; }
+        [Column("address2")] public string Address2 { get; set; }
+        [Column("phone2")] public string Phone2 { get; set; }
+        [Column("notes")] public string Notes { get; set; }
+        [Column("id"), PrimaryKey, Identity] public string Id { get; set; }
 
         public Contact(string firstname, string lastname)
         {
@@ -47,6 +51,46 @@ namespace WebAddressBookTests
         public Contact()
         {
         }
+
+        public static List<Contact> GetAll()
+        {
+            using (var db = new AddressbookDataBase())
+            {
+                var query =
+                    from contacts in db.Contacts
+                    select contacts;
+
+                return query.ToList();
+            }
+        }
+
+        public static Contact GetContactById(string id)
+        {
+            using (var db = new AddressbookDataBase())
+            {
+                var query =
+                    from contacts in db.Contacts
+                    where contacts.Id == id
+                    select contacts;
+
+                return query.FirstOrDefault();
+            }
+        }
+
+        public static List<Contact> GetBirthdays()
+        {
+            using (var db = new AddressbookDataBase())
+            {
+                var query =
+                    from contacts in db.Contacts
+                    where contacts.Birthday != "0"
+                    && contacts.Birthyear != "-"
+                    select contacts;
+
+                return query.ToList();
+            }
+        }
+
         public string Initial
         {
             get
@@ -57,9 +101,7 @@ namespace WebAddressBookTests
                 }
                 else
                 {
-                    string result = CleanUpInitial(Middlename);
-                    result += CleanUpInitial(Lastname);
-                    return result.Trim();
+                    return GenerateInitial();
                 }               
             }
             set
@@ -188,6 +230,14 @@ namespace WebAddressBookTests
                 allPhones = value;
             }
         }
+
+        public string GenerateInitial()
+        {
+            string result = CleanUpInitial(Middlename);
+            result += CleanUpInitial(Lastname);
+            
+            return result.Trim();
+        }      
 
         private string CleanUpPhone(string text)
         {

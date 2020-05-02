@@ -9,7 +9,7 @@ namespace WebAddressBookTests
         public void TestContactInformationFromTableHome()
         {
             applicationManager.ContactHelper.InitContactsListAction();
-            if (applicationManager.ContactHelper.IsContactsListEmpty())
+            if (Contact.GetAll().Count == 0)
             {
                 applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
             }
@@ -29,7 +29,7 @@ namespace WebAddressBookTests
         public void TestContactInformationFromTableBirthday()
         {
             applicationManager.ContactHelper.InitBirthdaysListAction();
-            if (applicationManager.ContactHelper.IsBirthdaysListEmpty())
+            if (Contact.GetBirthdays().Count == 0)
             {
                 applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
             }
@@ -48,7 +48,7 @@ namespace WebAddressBookTests
         public void TestContactInformationFromPrintFormHome()
         {
             applicationManager.ContactHelper.InitContactsListAction();
-            if (applicationManager.ContactHelper.IsContactsListEmpty())
+            if (Contact.GetAll().Count == 0)
             {
                 applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
             }
@@ -64,7 +64,7 @@ namespace WebAddressBookTests
         public void TestContactInformationFromPrintFormBirthday()
         {
             applicationManager.ContactHelper.InitBirthdaysListAction();
-            if (applicationManager.ContactHelper.IsBirthdaysListEmpty())
+            if (Contact.GetBirthdays().Count == 0)
             {
                 applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
             }

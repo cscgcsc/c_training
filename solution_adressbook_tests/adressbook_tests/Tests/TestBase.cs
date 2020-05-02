@@ -10,6 +10,7 @@ namespace WebAddressBookTests
         public Stopwatch stopWatch;
         public static Random rnd = new Random();
         protected ApplicationManager applicationManager;
+        public bool LONG_UI_CHECKS = true;
       
         public void StartCalculationRunTime()
         {

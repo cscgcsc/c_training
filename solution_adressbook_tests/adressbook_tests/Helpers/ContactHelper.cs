@@ -33,9 +33,23 @@ namespace WebAddressBookTests
             applicationManager.NavigationHelper.ReturnToStartPage();
         }
 
+        public void Modify(Contact contactData, string id)
+        {
+            OpenEditForm(id);
+            FillingContactData(contactData);
+            FormUpdate();
+            applicationManager.NavigationHelper.ReturnToStartPage();
+        }
+
         public void Remove(int index)
         {
             SelectContact(index);
+            FormDelete();
+        }
+
+        public void Remove(string id)
+        {
+            SelectContact(id);
             FormDelete();
         }
 
@@ -78,10 +92,15 @@ namespace WebAddressBookTests
 
         public List<Contact> GetBirthdaysList()
         {
+            if (IsBirthdaysListEmpty())
+            {
+                return new List<Contact>();
+            }
+
             if (birthdaysListCache == null)
             {
-                birthdaysListCache = new List<Contact>();
-
+                birthdaysListCache = new List<Contact>();               
+                
                 By Element = By.XPath("//table[@id='birthdays']/tbody/tr");
                 WaitForElementPresent(Element);
                 ICollection<IWebElement> rows = driver.FindElements(Element);
@@ -97,9 +116,10 @@ namespace WebAddressBookTests
                     }
 
                     string href = cells[6].FindElement(By.XPath("./a")).GetAttribute("href");
-                    birthdaysListCache.Add(new Contact(cells[2].Text, cells[1].Text)
+                    birthdaysListCache.Add(new Contact(cells[2].Text, "")
                     {
-                        Id = href.Substring(href.IndexOf("?id=") + 4)
+                        Id = href.Substring(href.IndexOf("?id=") + 4),
+                        Initial = cells[1].Text
                     });
                 }
             }
@@ -155,6 +175,13 @@ namespace WebAddressBookTests
             driver.FindElement(Element).Click();
         }
 
+        private void OpenEditForm(string id)
+        {
+            By Element = By.XPath("(//table//a[contains(@href,'edit.php?id=" + id + "')])");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();
+        }
+
         private void OpenPrintForm(int index)
         {
             By Element = By.XPath("(//table//a[contains(@href,'view.php')])[" + (index + 1) + "]");
@@ -165,6 +192,13 @@ namespace WebAddressBookTests
         private void SelectContact(int index)
         {
             By Element = By.XPath("(//input[@name='selected[]'])[" + (index + 1) + "]");
+            WaitForElementPresent(Element);
+            driver.FindElement(Element).Click();
+        }
+
+        private void SelectContact(string id)
+        {
+            By Element = By.XPath("(//input[@id='" + id + "'])");
             WaitForElementPresent(Element);
             driver.FindElement(Element).Click();
         }
@@ -268,6 +302,7 @@ namespace WebAddressBookTests
         private void FormUpdate()
         {
             driver.FindElement(By.XPath("(//input[@name='update'])[1]")).Click();
+            WaitForElementPresent(By.XPath("//div[@class='msgbox'][contains(text(),'Address book updated')]"));
             contactsListCache = null;
             birthdaysListCache = null;
         }

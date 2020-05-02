@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using LinqToDB.Mapping;
+using System.Linq;
 
 namespace WebAddressBookTests
 {
+    [Table("group_list")]
     public class Group : IEquatable<Group>, IComparable<Group>
     {
         private string groupname;
@@ -18,10 +22,35 @@ namespace WebAddressBookTests
         {          
         }
 
-        public string Groupheader { get => groupheader; set => groupheader = value; }
-        public string Groupfooter { get => groupfooter; set => groupfooter = value; }
-        public string Groupname { get => groupname; set => groupname = value; }
-        public string Id { get; set; }
+        [Column("group_header"), NotNull] public string Groupheader { get => groupheader; set => groupheader = value; }
+        [Column("group_footer"), NotNull] public string Groupfooter { get => groupfooter; set => groupfooter = value; }
+        [Column("group_name"), NotNull]  public string Groupname { get => groupname; set => groupname = value; }
+        [Column("group_id"), PrimaryKey, Identity] public string Id { get; set; }
+
+        public static List<Group> GetAll()
+        {
+            using (var db = new AddressbookDataBase())
+            {
+                var query =
+                    from groups in db.Groups
+                    select groups;
+
+                return query.ToList();          
+            }
+        }
+
+        public static Group GetGroupById(string id)
+        {
+            using (var db = new AddressbookDataBase())
+            {
+                var query =
+                    from groups in db.Groups
+                    where groups.Id == id
+                    select groups;
+
+                return query.FirstOrDefault();
+            }
+        }
 
         public int CompareTo(Group other)
         {
@@ -61,5 +90,22 @@ namespace WebAddressBookTests
         {
             return Groupname; 
         }
+
+        //var q1 =
+        //       from groupContactRelations in db.GroupContactRelations
+        //       join contacts in db.Contacts on groupContactRelations.Id equals contacts.Id
+        //       join groups in db.Groups on groupContactRelations.Group_Id equals groups.Id
+        //       select groupContactRelations;
+        //
+        //var q1 =
+        //       from contacts in db.Contacts
+        //       join groupContactRelations in db.GroupContactRelations on contacts.Id equals groupContactRelations.Id into gj
+        //       from subpet in gj.DefaultIfEmpty()
+        //       select new
+        //       {
+        //           contacts.Id,
+        //           contacts.Lastname,
+        //           GroupId = subpet.Group_Id
+        //       };
     }
 }

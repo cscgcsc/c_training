@@ -9,7 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace WebAddressBookTests
 {
     [TestFixture]
-    public class CreationContactTests : AuthorizationTestBase
+    public class CreationContactTests : ContactTestBase
     {
         public static List<Contact> RandomContactDataProvider()
         {
@@ -142,28 +142,40 @@ namespace WebAddressBookTests
                 });
             }
 
-            workbook.Close();
+            workbook.Close();         
             //убираем окно excel
             app.Visible = false;
 
             return contactsDataList;
         }
 
-        [Test, TestCaseSource("ContactsDataFromXlsxProvider")]
+        [Test, TestCaseSource("ContactsDataFromXmlProvider")]
         public void CreateContact(Contact contactData)
+        {           
+            List<Contact> oldContactsList = Contact.GetAll();
+            oldContactsList.Add(contactData);
+            
+            applicationManager.ContactHelper.Create(contactData);
+            List<Contact> newContactsList = Contact.GetAll();
+            oldContactsList.Sort();
+            newContactsList.Sort();
+
+            Assert.AreEqual(oldContactsList, newContactsList);
+        }
+
+        //[Test, TestCaseSource("ContactsDataFromXmlProvider")]
+        public void OldCreateContact(Contact contactData)
         {
-            StartCalculationRunTime();
             List<Contact> oldContactsList = applicationManager.ContactHelper.GetContactsList();
-            StopCalculationRunTime();
             oldContactsList.Add(contactData);
             oldContactsList.Sort();
 
             applicationManager.ContactHelper.Create(contactData);
-            
+
             List<Contact> newContactsList = applicationManager.ContactHelper.GetContactsList();
             newContactsList.Sort();
 
-            Assert.AreEqual(oldContactsList, newContactsList);           
+            Assert.AreEqual(oldContactsList, newContactsList);
         }
     }
 }

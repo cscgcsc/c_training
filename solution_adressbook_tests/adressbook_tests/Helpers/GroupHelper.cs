@@ -30,9 +30,25 @@ namespace WebAddressBookTests
             applicationManager.NavigationHelper.ReturnToGroupPage();
         }
 
+        public void Modify(Group groupData, string id)
+        {
+            SelectGroup(id);
+            ModifyGroup();
+            FillingGroupData(groupData);
+            FormUpdate();
+            applicationManager.NavigationHelper.ReturnToGroupPage();
+        }
+
         public void Remove(int index)
         {
             SelectGroup(index);
+            RemoveGroup();
+            applicationManager.NavigationHelper.ReturnToGroupPage();
+        }
+
+        public void Remove(string id)
+        {
+            SelectGroup(id);
             RemoveGroup();
             applicationManager.NavigationHelper.ReturnToGroupPage();
         }
@@ -86,6 +102,11 @@ namespace WebAddressBookTests
         private void SelectGroup(int index)
         {
             driver.FindElement(By.XPath("(//input[@name='selected[]'])[" + (index + 1) + "]")).Click();
+        }
+
+        private void SelectGroup(string id)
+        {
+            driver.FindElement(By.XPath("(//input[@name='selected[]' and @value='" + id + "'])")).Click();
         }
 
         private void FormSubmit()
