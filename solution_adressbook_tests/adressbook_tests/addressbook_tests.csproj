@@ -93,6 +93,8 @@
     <Compile Include="Helpers\LoginHelper.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Model\GroupContactRelation.cs" />
+    <Compile Include="Tests\AddingContactToGroupTestBase.cs" />
+    <Compile Include="Tests\AddingContactToGroupTests.cs" />
     <Compile Include="Tests\AuthorizationTestBase.cs" />
     <Compile Include="Tests\AuthorizationTests.cs" />
     <Compile Include="Tests\ContactTestBase.cs" />

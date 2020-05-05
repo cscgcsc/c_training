@@ -8,8 +8,9 @@ namespace WebAddressBookTests
         [TearDown]
         public void CompareGroupsUI_DB()
         {
-            if(LONG_UI_CHECKS)
+            if (LONG_UI_CHECKS)
             {
+                applicationManager.GroupHelper.InitGroupsListAction();
                 List<Group> groupsListUI = applicationManager.GroupHelper.GetGroupsList();
                 List<Group> groupsListDB = Group.GetAll();
                 groupsListDB.Sort();

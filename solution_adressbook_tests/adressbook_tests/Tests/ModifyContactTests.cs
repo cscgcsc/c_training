@@ -105,7 +105,7 @@ namespace WebAddressBookTests
             string modifiedId = oldBirthdaysList[0].Id;
 
             applicationManager.ContactHelper.Modify(contactData, modifiedId);
-            List<Contact> newBirthdaysList = Contact.GetAll();
+            List<Contact> newBirthdaysList = Contact.GetBirthdays();
             oldBirthdaysList.Sort();
             newBirthdaysList.Sort();
 

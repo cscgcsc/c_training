@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
+using System;
 using System.Collections.Generic;
 
 namespace WebAddressBookTests
@@ -81,7 +82,7 @@ namespace WebAddressBookTests
             }
 
             return new List<Group>(groupsListCache);
-        } 
+        }
 
         private void AddGroup()
         {

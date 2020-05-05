@@ -83,6 +83,14 @@ namespace WebAddressBookTests
             {
                 new SelectElement(driver.FindElement(element)).SelectByText(value);
             }
-        }      
+        }
+
+        protected void SelectByValue(By element, string value)
+        {
+            if (value != null)
+            {
+                new SelectElement(driver.FindElement(element)).SelectByValue(value);
+            }
+        }
     }
 }

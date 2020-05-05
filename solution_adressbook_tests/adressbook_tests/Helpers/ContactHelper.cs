@@ -59,6 +59,14 @@ namespace WebAddressBookTests
             FormDelete();
         }
 
+        public void AddContactToGroup(string contactId, string groupId)
+        {
+            SelectContact(contactId);
+            SelectGroup(groupId);
+            FormAddToGroup();
+            applicationManager.NavigationHelper.ReturnToStartPage();
+        }
+
         //Таблицы
         public List<Contact> GetContactsList()
         {
@@ -158,7 +166,7 @@ namespace WebAddressBookTests
 
         public bool IsContactsListEmpty()
         {
-            ClearContactGroupFilter();
+            ClearGroupFilter();
             return driver.FindElement(By.XPath("//span[@id='search_count']")).Text == "0";
         }
 
@@ -210,7 +218,22 @@ namespace WebAddressBookTests
             driver.FindElement(Element).Click();
         }
 
-        private void ClearContactGroupFilter()
+        private void SelectGroup(string id)
+        {
+            By Element = By.XPath("(//select[@name='to_group'])");
+            WaitForElementPresent(Element);
+            new SelectElement(driver.FindElement(Element)).SelectByValue(id);
+        }
+
+        public void SelectGroupFilter(string id)
+        {
+            By Element = By.XPath("(//select[@name='group'])");
+            WaitForElementPresent(Element);
+            new SelectElement(driver.FindElement(Element)).SelectByValue(id);
+            contactsListCache = null;
+        }
+
+        public void ClearGroupFilter()
         {
             By Element = By.XPath("//select[@name='group']");
             WaitForElementPresent(Element);
@@ -286,6 +309,7 @@ namespace WebAddressBookTests
             Select(By.Name("aday"), contactData.Anniversaryday);
             Select(By.Name("amonth"), contactData.Anniversarymonth);
             Type(By.Name("ayear"), contactData.Anniversaryyear);
+            SelectByValue(By.Name("new_group"), contactData.GroupId);
             Type(By.Name("address2"), contactData.Address2);
             Type(By.Name("phone2"), contactData.Phone2);
             Type(By.Name("notes"), contactData.Notes);
@@ -314,6 +338,13 @@ namespace WebAddressBookTests
             birthdaysListCache = null;
             Assert.IsTrue(Regex.IsMatch(CloseAlertAndGetItsText(true), "^Delete \\d* addresses[\\s\\S]$"));
             WaitForElementPresent(By.XPath("//div[@class='msgbox'][contains(text(),'Record successful deleted')]"));
+        }
+
+        private void FormAddToGroup()
+        {
+            driver.FindElement(By.XPath("//input[@name='add']")).Click();
+            WaitForElementPresent(By.XPath("//div[@class='msgbox'][contains(text(),'Users added.')]"));
+            contactsListCache = null;        
         }
 
         //Служебные

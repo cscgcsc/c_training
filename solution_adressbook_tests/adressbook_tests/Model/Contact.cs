@@ -40,6 +40,7 @@ namespace WebAddressBookTests
         [Column("phone2")] public string Phone2 { get; set; }
         [Column("notes")] public string Notes { get; set; }
         [Column("id"), PrimaryKey, Identity] public string Id { get; set; }
+        public string GroupId { get; set; }
 
         public Contact(string firstname, string lastname)
         {
@@ -331,6 +332,28 @@ namespace WebAddressBookTests
         public override string ToString()
         {
             return "Firstname: " + Firstname + " Lastname: " + Lastname;
+        }
+    }
+    
+    class ContactComparer : IEqualityComparer<Contact>
+    {
+        public bool Equals(Contact x, Contact y)
+        {
+            if (Object.ReferenceEquals(x, y)) return true;
+            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+                return false;
+
+            return x.Id == y.Id && x.Firstname == y.Firstname;
+        }
+
+        public int GetHashCode(Contact contact)
+        {
+            if (Object.ReferenceEquals(contact, null)) return 0;
+
+            int hashContactId = contact.Id == null ? 0 : contact.Id.GetHashCode();
+            int hashContactFirstname = contact.Firstname.GetHashCode();
+
+            return hashContactId ^ hashContactFirstname;
         }
     }
 }

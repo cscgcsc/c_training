@@ -52,6 +52,36 @@ namespace WebAddressBookTests
             }
         }
 
+        public static List<Contact> GetContactsInGroup(string id)
+        {
+            using (var db = new AddressbookDataBase())
+            {
+                var query =
+                    from groupContactRelations in db.GroupContactRelations
+                    join contacts in db.Contacts on groupContactRelations.Id equals contacts.Id
+                    where groupContactRelations.Group_Id == id
+                    //join groups in db.Groups on groupContactRelations.Group_Id equals groups.Id
+                    select contacts;
+
+                return query.ToList();
+            }
+        }
+
+        public static List<Contact> GetContactsNotInGroups()
+        {
+            using (var db = new AddressbookDataBase())
+            {
+                var query =
+                   from contacts in db.Contacts
+                   join groupContactRelations in db.GroupContactRelations on contacts.Id equals groupContactRelations.Id into table1
+                   from newcontacts in table1.DefaultIfEmpty()
+                   where newcontacts.Group_Id == null
+                   select contacts;
+
+                return query.ToList();
+            }
+        }
+
         public int CompareTo(Group other)
         {
             //1 - текущий объект больше
@@ -91,12 +121,6 @@ namespace WebAddressBookTests
             return Groupname; 
         }
 
-        //var q1 =
-        //       from groupContactRelations in db.GroupContactRelations
-        //       join contacts in db.Contacts on groupContactRelations.Id equals contacts.Id
-        //       join groups in db.Groups on groupContactRelations.Group_Id equals groups.Id
-        //       select groupContactRelations;
-        //
         //var q1 =
         //       from contacts in db.Contacts
         //       join groupContactRelations in db.GroupContactRelations on contacts.Id equals groupContactRelations.Id into gj
