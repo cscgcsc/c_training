@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace WebAddressBookTests
 {
     public class User
@@ -13,8 +8,8 @@ namespace WebAddressBookTests
 
         public User(string login, string password)
         {
-            this.Login    = login;
-            this.Password = password;
+            Login    = login;
+            Password = password;
         }
     }
 }

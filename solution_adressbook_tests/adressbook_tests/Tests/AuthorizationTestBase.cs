@@ -7,7 +7,7 @@ namespace WebAddressBookTests
         [SetUp]
         protected void SetupAuthorizationTest()
         {
-            applicationManager.LoginHelper.Login(new User("admin", "secret"));
+            app.LoginHelper.Login(new User("admin", "secret"));
         }
     }
 }

@@ -1,10 +1,8 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Support.UI;
+﻿using OpenQA.Selenium;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System;
 
 namespace WebAddressBookTests
 {
@@ -13,16 +11,16 @@ namespace WebAddressBookTests
         private List<Contact> contactsListCache = null;
         private List<Contact> birthdaysListCache = null;
 
-        public ContactHelper(ApplicationManager applicationManager) : base(applicationManager)
+        public ContactHelper(ApplicationManager app) : base(app)
         {
         }
 
         public void Create(Contact contactData)
         {
-            applicationManager.NavigationHelper.GoToNewContactPage();
+            app.NavigationHelper.GoToNewContactPage();
             FillingContactData(contactData);
             FormSubmit();
-            applicationManager.NavigationHelper.ReturnToStartPage();
+            app.NavigationHelper.ReturnToStartPage();
         }
 
         public void Modify(Contact contactData, int index)
@@ -30,7 +28,7 @@ namespace WebAddressBookTests
             OpenEditForm(index);
             FillingContactData(contactData);
             FormUpdate();
-            applicationManager.NavigationHelper.ReturnToStartPage();
+            app.NavigationHelper.ReturnToStartPage();
         }
 
         public void Modify(Contact contactData, string id)
@@ -38,7 +36,7 @@ namespace WebAddressBookTests
             OpenEditForm(id);
             FillingContactData(contactData);
             FormUpdate();
-            applicationManager.NavigationHelper.ReturnToStartPage();
+            app.NavigationHelper.ReturnToStartPage();
         }
 
         public void Remove(int index)
@@ -64,7 +62,7 @@ namespace WebAddressBookTests
             SelectContact(contactId);
             SelectGroup(groupId);
             FormAddToGroup();
-            applicationManager.NavigationHelper.ReturnToStartPage();
+            app.NavigationHelper.ReturnToStartPage();
         }
 
         //Таблицы
@@ -73,10 +71,7 @@ namespace WebAddressBookTests
             if (contactsListCache == null)
             {
                 contactsListCache = new List<Contact>();
-
-                By Element = By.XPath("//table[@id='maintable']/tbody/tr");
-                WaitForElementPresent(Element);
-                ICollection<IWebElement> rows = driver.FindElements(Element);
+                ICollection<IWebElement> rows = driver.FindElements(By.XPath("//table[@id='maintable']//tr"));
 
                 foreach (IWebElement row in rows)
                 {
@@ -84,9 +79,7 @@ namespace WebAddressBookTests
                     
                     //Если это заголовок таблицы <th>
                     if(cells.Count == 0)
-                    {
                         continue;
-                    }
 
                     contactsListCache.Add(new Contact(cells[2].Text, cells[1].Text)
                     {
@@ -101,17 +94,12 @@ namespace WebAddressBookTests
         public List<Contact> GetBirthdaysList()
         {
             if (IsBirthdaysListEmpty())
-            {
                 return new List<Contact>();
-            }
 
             if (birthdaysListCache == null)
             {
-                birthdaysListCache = new List<Contact>();               
-                
-                By Element = By.XPath("//table[@id='birthdays']/tbody/tr");
-                WaitForElementPresent(Element);
-                ICollection<IWebElement> rows = driver.FindElements(Element);
+                birthdaysListCache = new List<Contact>();                              
+                ICollection<IWebElement> rows = driver.FindElements(By.XPath("//table[@id='birthdays']//tr"));
 
                 foreach (IWebElement row in rows)
                 {
@@ -119,9 +107,7 @@ namespace WebAddressBookTests
 
                     //Если это заголовок таблицы <th> или colspan
                     if (cells.Count < 2)
-                    {
                         continue;
-                    }
 
                     string href = cells[6].FindElement(By.XPath("./a")).GetAttribute("href");
                     birthdaysListCache.Add(new Contact(cells[2].Text, "")
@@ -137,9 +123,7 @@ namespace WebAddressBookTests
 
         public Contact GetContactInformationFromTable(int index)
         {
-            By Element = By.XPath("//table[@id='maintable']/tbody/tr[@name='entry'][" + (index + 1) + "]");
-            IWebElement row = driver.FindElement(Element);
-
+            IWebElement row = driver.FindElement(By.XPath("//table[@id='maintable']//tr[@name='entry'][" + (index + 1) + "]"));
             List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
             return new Contact(cells[2].Text, cells[1].Text)
             {
@@ -151,9 +135,7 @@ namespace WebAddressBookTests
 
         public Contact GetContactInformationFromBirthdaysTable(int index)
         {
-            By Element = By.XPath("//table[@id='birthdays']/tbody/tr[contains(@class, 'odd') or contains(@class ,'even')][" + (index + 1) + "]");
-            IWebElement row = driver.FindElement(Element);
-
+            IWebElement row = driver.FindElement(By.XPath("//table[@id='birthdays']//tr[contains(@class, 'odd') or contains(@class ,'even')][" + (index + 1) + "]"));
             List<IWebElement> cells = row.FindElements(By.XPath("./td")).ToList();
             return new Contact(cells[2].Text, "")
             {
@@ -178,67 +160,61 @@ namespace WebAddressBookTests
         //Действия в таблице
         private void OpenEditForm(int index)
         {
-            By Element = By.XPath("(//table//a[contains(@href,'edit.php')])[" + (index + 1) + "]");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            driver.FindElement(By.XPath("(//table//a[contains(@href,'edit.php')])[" + (index + 1) + "]")).Click();
         }
 
         private void OpenEditForm(string id)
         {
-            By Element = By.XPath("(//table//a[contains(@href,'edit.php?id=" + id + "')])");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            driver.FindElement(By.XPath("(//table//a[contains(@href,'edit.php?id=" + id + "')])")).Click();
         }
 
         private void OpenPrintForm(int index)
         {
-            By Element = By.XPath("(//table//a[contains(@href,'view.php')])[" + (index + 1) + "]");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            driver.FindElement(By.XPath("(//table//a[contains(@href,'view.php')])[" + (index + 1) + "]")).Click();
         }
 
         private void SelectContact(int index)
         {
-            By Element = By.XPath("(//input[@name='selected[]'])[" + (index + 1) + "]");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            driver.FindElement(By.XPath("(//input[@name='selected[]'])[" + (index + 1) + "]")).Click();
         }
 
         private void SelectContact(string id)
         {
-            By Element = By.XPath("(//input[@id='" + id + "'])");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            driver.FindElement(By.XPath("(//input[@id='" + id + "'])")).Click();
         }
 
         private void SelectAllContacts()
         {
-            By Element = By.XPath("//input[@id='MassCB']");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            driver.FindElement(By.XPath("//input[@id='MassCB']")).Click();
         }
 
         private void SelectGroup(string id)
         {
-            By Element = By.XPath("(//select[@name='to_group'])");
-            WaitForElementPresent(Element);
-            new SelectElement(driver.FindElement(Element)).SelectByValue(id);
+            SelectByValue(By.XPath("(//select[@name='to_group'])"), id);
         }
 
-        public void SelectGroupFilter(string id)
+        public void SelectGroupFilter(string value)
         {
-            By Element = By.XPath("(//select[@name='group'])");
-            WaitForElementPresent(Element);
-            new SelectElement(driver.FindElement(Element)).SelectByValue(id);
+            IWebElement group = driver.FindElement(By.XPath("//select[@name='group']"));
+            if (group.GetAttribute("value") == value)
+                return;
+
+            IWebElement count = driver.FindElement(By.XPath("//span[@id='search_count']"));
+            SelectByValue(group, value);
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.StalenessOf(count));
             contactsListCache = null;
         }
 
         public void ClearGroupFilter()
         {
-            By Element = By.XPath("//select[@name='group']");
-            WaitForElementPresent(Element);
-            new SelectElement(driver.FindElement(Element)).SelectByText("[all]");
-            driver.FindElement(By.XPath("//option[@value='']")).Click();
+            IWebElement group = driver.FindElement(By.XPath("//select[@name='group']"));
+            if (group.GetAttribute("value") == "") 
+               return;
+
+            IWebElement count = driver.FindElement(By.XPath("//span[@id='search_count']"));
+            Select(group, "[all]");
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.StalenessOf(count));
+            contactsListCache = null;
         }
 
         //Формы
@@ -280,8 +256,7 @@ namespace WebAddressBookTests
             OpenPrintForm(index);
             string printText = driver.FindElement(By.XPath("//div[@id='content']")).Text;
             printText = Regex.Replace(printText, @"[\r\n]{2,}\s*[\r\n]", "\r\n");
-
-            applicationManager.NavigationHelper.ReturnToStartPage();
+            app.NavigationHelper.ReturnToStartPage();
 
             return printText;
         }
@@ -326,7 +301,7 @@ namespace WebAddressBookTests
         private void FormUpdate()
         {
             driver.FindElement(By.XPath("(//input[@name='update'])[1]")).Click();
-            WaitForElementPresent(By.XPath("//div[@class='msgbox'][contains(text(),'Address book updated')]"));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//div[@class='msgbox'][contains(text(),'Address book updated')]")));
             contactsListCache = null;
             birthdaysListCache = null;
         }
@@ -334,16 +309,17 @@ namespace WebAddressBookTests
         private void FormDelete()
         {
             driver.FindElement(By.XPath("//input[@value='Delete']")).Click();
+            if (!Regex.IsMatch(CloseAlertAndGetItsText(true), "^Delete \\d* addresses[\\s\\S]$"))
+                throw new Exception("Messagebox is not correct");
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//div[@class='msgbox'][contains(text(),'Record successful deleted')]")));
             contactsListCache = null;
             birthdaysListCache = null;
-            Assert.IsTrue(Regex.IsMatch(CloseAlertAndGetItsText(true), "^Delete \\d* addresses[\\s\\S]$"));
-            WaitForElementPresent(By.XPath("//div[@class='msgbox'][contains(text(),'Record successful deleted')]"));
         }
 
         private void FormAddToGroup()
         {
             driver.FindElement(By.XPath("//input[@name='add']")).Click();
-            WaitForElementPresent(By.XPath("//div[@class='msgbox'][contains(text(),'Users added.')]"));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//div[@class='msgbox'][contains(text(),'Users added.')]")));
             contactsListCache = null;        
         }
 
@@ -363,100 +339,64 @@ namespace WebAddressBookTests
 
             //Телефоны
             if (!string.IsNullOrEmpty(contactData.Home))
-            {
                 result += CleanUp(("H: " + CleanUp(contactData.Home, false)));
-            }
 
             if (!string.IsNullOrEmpty(contactData.Mobile))
-            {
                 result += CleanUp(("M: " + CleanUp(contactData.Mobile, false)));
-            }
 
             if (!string.IsNullOrEmpty(contactData.Work))
-            {
                 result += CleanUp(("W: " + CleanUp(contactData.Work, false)));
-            }
 
             if (!string.IsNullOrEmpty(contactData.Fax))
-            {
                 result += CleanUp(("F: " + CleanUp(contactData.Fax, false)));
-            }
 
             //Почта
             result += CleanUp(contactData.AllEmail);
 
             //Сайт
             if (!string.IsNullOrEmpty(contactData.Homepage))
-            {
-                result += CleanUp("Homepage:\r\n" + CleanUp(Regex.Replace(contactData.Homepage, "(http://)|(https://)", ""), false));
-            }          
+                result += CleanUp("Homepage:\r\n" + CleanUp(Regex.Replace(contactData.Homepage, "(http://)|(https://)", ""), false));         
 
             //День рождения
             string temp = "";
-            if (!string.IsNullOrWhiteSpace(contactData.Birthday) 
-                && contactData.Birthday != "0")
-            {
+            if (!string.IsNullOrWhiteSpace(contactData.Birthday) && contactData.Birthday != "0")
                 temp += contactData.Birthday + ". ";
-            }
 
-            if (!string.IsNullOrWhiteSpace(contactData.Birthmonth)
-                && contactData.Birthmonth != "-")
-            {
+            if (!string.IsNullOrWhiteSpace(contactData.Birthmonth) && contactData.Birthmonth != "-")
                 temp += contactData.Birthmonth + " ";
-            }
 
             if (!string.IsNullOrEmpty(contactData.Birthyear))
-            {
                 temp += contactData.Birthyear.Trim() + " ";
-            }
 
             if (!string.IsNullOrEmpty(contactData.Age))
-            {
                 temp += "(" + contactData.Age + ")";
-            }
 
             if(temp != "")
-            {
                 result += CleanUp("Birthday " + temp);
-            }
 
             //Юбилей
             temp = "";
-            if (!string.IsNullOrWhiteSpace(contactData.Anniversaryday)
-                && contactData.Anniversaryday != "0")
-            {
+            if (!string.IsNullOrWhiteSpace(contactData.Anniversaryday) && contactData.Anniversaryday != "0")
                 temp += contactData.Anniversaryday + ". ";
-            }
 
-            if (!string.IsNullOrWhiteSpace(contactData.Anniversarymonth)
-                && contactData.Anniversarymonth != "-")
-            {
+            if (!string.IsNullOrWhiteSpace(contactData.Anniversarymonth) && contactData.Anniversarymonth != "-")
                 temp += contactData.Anniversarymonth + " ";
-            }
 
             if (!string.IsNullOrEmpty(contactData.Anniversaryyear))
-            {
                 temp += contactData.Anniversaryyear.Trim() + " ";
-            }
 
             if (!string.IsNullOrEmpty(contactData.Anniversary))
-            {
                 temp += "(" + contactData.Anniversary + ")";
-            }
 
             if (temp != "")
-            {
                 result += CleanUp("Anniversary " + temp);
-            }
 
             //Адрес
             result += CleanUpMultilineText(contactData.Address2);
 
             //Телефон
             if (!string.IsNullOrEmpty(contactData.Phone2))
-            {
                 result += CleanUp("P: " + CleanUp(contactData.Phone2, false));
-            }
 
             //Заметка
             result += CleanUpMultilineText(contactData.Notes);
@@ -467,15 +407,11 @@ namespace WebAddressBookTests
         public string CleanUp(string text, bool lineBreak = true)
         {
             if (string.IsNullOrWhiteSpace(text))
-            {
                 return "";
-            }
 
+            //несколько пробелов переделаем в один
             if (lineBreak)
-            {
-                //несколько пробелов переделаем в один
                 return Regex.Replace(text.Trim(), @"[ ]{2,}", " ") + "\r\n";
-            }
 
             return Regex.Replace(text.Trim(), @"[ ]{2,}", " ");
         }
@@ -483,39 +419,38 @@ namespace WebAddressBookTests
         public string CleanUpMultilineText(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
-            {
                 return "";
-            }
+
             //несколько пробелов переделаем в один
             text = Regex.Replace(text, @"[ ]{2,}", " ");
             //удалим пробелы в начале и конце каждой строки 
             text = Regex.Replace(text, @"([ ]*\r\n[ ]*)", "\r\n");
             //несколько переносов строк переделаем в один
             text = Regex.Replace(text, @"[\r\n]{2,}\s*[\r\n]", "\r\n");
+
             return text.Trim() + "\r\n";
         }
 
         public Contact GetDefaultContactData()
         {
-            Contact contactData = new Contact("Ivan", "Ivanov")
+            return new Contact("Ivan", "Ivanov")
             {
                 Birthday = "1",
                 Birthmonth = "January",
                 Birthyear = "1900"
             };
-            return contactData;
         }
 
         public void InitContactsListAction()
         {
-            applicationManager.NavigationHelper.GoToHomePage();
-            applicationManager.NavigationHelper.SetStartPage();
+            app.NavigationHelper.GoToHomePage();
+            app.NavigationHelper.SetStartPage();
         }
 
         public void InitBirthdaysListAction()
         {
-            applicationManager.NavigationHelper.GoToBirthdayPage();
-            applicationManager.NavigationHelper.SetStartPage();
+            app.NavigationHelper.GoToBirthdayPage();
+            app.NavigationHelper.SetStartPage();
         }
     }
 }

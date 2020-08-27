@@ -1,6 +1,4 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Support.UI;
 
 namespace WebAddressBookTests
 {
@@ -15,88 +13,81 @@ namespace WebAddressBookTests
 
         public void OpenURL()
         {
-            if(driver.Url == applicationManager.baseURL + "/addressbook/index.php")
-            {
+            if(driver.Url == app.baseURL + "/addressbook/index.php")
                 return;
-            }
-            driver.Navigate().GoToUrl(applicationManager.baseURL + "/addressbook/index.php");
+
+            driver.Navigate().GoToUrl(app.baseURL + "/addressbook/index.php");
         }
 
         public void GoToHomePage()
         {
-            if (driver.Url == applicationManager.baseURL + "/addressbook/index.php")
-            {
+            if (driver.Url == app.baseURL + "/addressbook/index.php")
                 return;
-            }
-            By Element = By.LinkText("home");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+
+            driver.FindElement(By.XPath("//div[@id='nav']//a[contains(@href, './')]")).Click();
+            WaitHomePageIsLoaded();
         }
 
         public void ReturnToHomePage()
         {
-            if (driver.Url == applicationManager.baseURL + "/addressbook/index.php")
-            {
-                return;
-            }
-            By Element = By.LinkText("home page");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            driver.FindElement(By.XPath("//div[contains(@class, 'msgbox')]//a[contains(@href, 'index.php')]")).Click();
+            WaitHomePageIsLoaded();
         }
 
         public void GoToGroupPage()
         {
-            if (driver.Url == applicationManager.baseURL + "/addressbook/group.php")
-            {
+            if (driver.Url == app.baseURL + "/addressbook/group.php")
                 return;
-            }
-            By Element = By.LinkText("groups");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+
+            driver.FindElement(By.XPath("//div[@id='nav']//a[contains(@href, 'group.php')]")).Click();
+            WaitGroupPageIsLoaded();
         }
 
         public void ReturnToGroupPage()
         {
-            By Element = By.LinkText("group page");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+            driver.FindElement(By.XPath("//div[contains(@class, 'msgbox')]//a[contains(@href, 'group.php')]")).Click();
+            WaitGroupPageIsLoaded();
         }
 
         public void GoToBirthdayPage()
         {
-            if (driver.Url == applicationManager.baseURL + "/addressbook/birthdays.php")
-            {
+            if (driver.Url == app.baseURL + "/addressbook/birthdays.php")
                 return;
-            }
-            By Element = By.LinkText("next birthdays");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+
+            driver.FindElement(By.XPath("//div[@id='nav']//a[contains(@href, 'birthdays.php')]")).Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.XPath("//table[@id='birthdays']")));
         }
 
         public void GoToNewContactPage()
         {
-            if (driver.Url == applicationManager.baseURL + "/addressbook/edit.php")
-            {
+            if (driver.Url == app.baseURL + "/addressbook/edit.php")
                 return;
-            }
-            By Element = By.LinkText("add new");
-            WaitForElementPresent(Element);
-            driver.FindElement(Element).Click();
+
+            driver.FindElement(By.XPath("//div[@id='nav']//a[contains(@href, 'edit.php')]")).Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//form[contains(@action, 'edit.php')]")));
         }
 
         public void ReturnToStartPage()
         {
             if(startURL == null)
-            {
                 GoToHomePage();
-                return;
-            }
-            driver.Navigate().GoToUrl(startURL);         
+            else
+                driver.Navigate().GoToUrl(startURL);         
         }
 
         public void SetStartPage()
         {
             startURL = driver.Url;
+        }
+
+        private void WaitHomePageIsLoaded()
+        {
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//table[@id='maintable']")));
+        }
+
+        private void WaitGroupPageIsLoaded()
+        {
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//form[contains(@action, 'group.php')]")));
         }
     }
 }

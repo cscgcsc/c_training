@@ -8,18 +8,18 @@ namespace WebAddressBookTests
         [Test]
         public void LoginWithValidCredentials()
         {
-            applicationManager.LoginHelper.Logout();
+            app.LoginHelper.Logout();
             User user = new User("admin", "secret");
-            applicationManager.LoginHelper.Login(user);
-            Assert.IsTrue(applicationManager.LoginHelper.IsLoggedIn(user));
+            app.LoginHelper.Login(user);
+            Assert.IsTrue(app.LoginHelper.IsLoggedIn(user));
         }
 
         [Test]
         public void LoginWithInvalidCredentials()
         {
-            applicationManager.LoginHelper.Logout();
-            applicationManager.LoginHelper.Login(new User("admin1", "secret1"));
-            Assert.IsFalse(applicationManager.LoginHelper.IsLoggedIn());
+            app.LoginHelper.Logout();
+            app.LoginHelper.Login(new User("admin1", "secret1"));
+            Assert.IsFalse(app.LoginHelper.IsLoggedIn());
         }  
     }
 }

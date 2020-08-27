@@ -1,49 +1,68 @@
-﻿using System;
-using System.Threading;
-using NUnit.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 
 namespace WebAddressBookTests
 {
     public class HelperBase
     {
-        protected IWebDriver driver;
-        protected ApplicationManager applicationManager;
+        protected ApplicationManager app;
+        protected IWebDriver driver;      
+        protected WebDriverWait wait;
 
-        public HelperBase(ApplicationManager applicationManager)
+        public HelperBase(ApplicationManager app)
         {
-            driver = applicationManager.Driver;
-            this.applicationManager = applicationManager;
+            this.app = app;
+            driver = app.Driver;
+            wait = app.Wait;
         }
 
-        protected void WaitForElementPresent(By element)
+        protected bool IsElementPresent(By by)
         {
-            for (int second = 0; ; second++)
-            {
-                if (second >= 60) Assert.Fail("timeout");
-                try
-                {
-                    if (IsElementPresent(element)) break;
-                }
-                catch (Exception)
-                { }
-                Thread.Sleep(1000);
-            }
+            return driver.FindElements(by).Count > 0;
         }
 
-        protected bool IsElementPresent(By element)
+        protected bool IsElementPresent(By by, out IWebElement element)
         {
-            try
+            ICollection<IWebElement> elements = driver.FindElements(by);
+            if (elements.Count > 0)
             {
-                driver.FindElement(element);
+                element = elements.First();
                 return true;
             }
-            catch (NoSuchElementException)
+            else
             {
+                element = null;
                 return false;
             }
+        }
+
+        protected bool IsElementPresentContext(By by, IWebElement context)
+        {
+            return context.FindElements(by).Count > 0;
+        }
+
+        protected bool IsElementPresentContext(By by, IWebElement context, out IWebElement element)
+        {
+            ICollection<IWebElement> elements = context.FindElements(by);
+            if (elements.Count > 0)
+            {
+                element = elements.First();
+                return true;
+            }
+            else
+            {
+                element = null;
+                return false;
+            }
+        }
+
+        protected bool IsDocumentReadyStateComplete()
+        {
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+            string readyState = (string)js.ExecuteScript("return document.readyState");
+            return readyState.Equals("complete");
         }
 
         protected string CloseAlertAndGetItsText(bool acceptNextAlert)
@@ -64,32 +83,47 @@ namespace WebAddressBookTests
             }
             finally
             {
-                acceptNextAlert = true;
             }
         }
 
-        protected void Type(By element, string value)
+        protected void Type(By by, string value)
         {
             if(value != null)
             {
-                driver.FindElement(element).Clear();
-                driver.FindElement(element).SendKeys(value);
+                driver.FindElement(by).Clear();
+                driver.FindElement(by).SendKeys(value);
             }
         }
 
-        protected void Select(By element, string value)
+        protected void Select(By by, string value)
         {
             if (value != null)
             {
-                new SelectElement(driver.FindElement(element)).SelectByText(value);
+                new SelectElement(driver.FindElement(by)).SelectByText(value);
             }
         }
 
-        protected void SelectByValue(By element, string value)
+        protected void Select(IWebElement element, string value)
         {
             if (value != null)
             {
-                new SelectElement(driver.FindElement(element)).SelectByValue(value);
+                new SelectElement(element).SelectByText(value);
+            }
+        }
+
+        protected void SelectByValue(By by, string value)
+        {
+            if (value != null)
+            {
+                new SelectElement(driver.FindElement(by)).SelectByValue(value);
+            }
+        }
+
+        protected void SelectByValue(IWebElement element, string value)
+        {
+            if (value != null)
+            {
+                new SelectElement(element).SelectByValue(value);
             }
         }
     }

@@ -6,15 +6,11 @@ using System.Linq;
 namespace WebAddressBookTests
 {
     [Table("group_list")]
-    public class Group : IEquatable<Group>, IComparable<Group>
+    public class Group : IEquatable<Group>, IComparable
     {
-        private string groupname;
-        private string groupheader;
-        private string groupfooter;
-
         public Group(string groupname)
         {
-            this.groupname = groupname;
+            Groupname = groupname;
         }
 
         //пустой конструктор для XmlSerializer
@@ -22,9 +18,9 @@ namespace WebAddressBookTests
         {          
         }
 
-        [Column("group_header"), NotNull] public string Groupheader { get => groupheader; set => groupheader = value; }
-        [Column("group_footer"), NotNull] public string Groupfooter { get => groupfooter; set => groupfooter = value; }
-        [Column("group_name"), NotNull]  public string Groupname { get => groupname; set => groupname = value; }
+        [Column("group_header"), NotNull] public string Groupheader { get; set; }
+        [Column("group_footer"), NotNull] public string Groupfooter { get; set; }
+        [Column("group_name"), NotNull] public string Groupname { get; set; }
         [Column("group_id"), PrimaryKey, Identity] public string Id { get; set; }
 
         public static List<Group> GetAll()
@@ -82,33 +78,29 @@ namespace WebAddressBookTests
             }
         }
 
-        public int CompareTo(Group other)
-        {
+        public int CompareTo(object obj)
+        {           
             //1 - текущий объект больше
             //0 - объекты равны
             //-1 - текущий объект меньше
-             
-            if (Object.ReferenceEquals(other, null))
-            {
-                return 1; 
-            }
+            if (obj is null)
+                return 1;
 
-            return Groupname.CompareTo(other.Groupname);
+            if (obj is Group other)
+                return Groupname.CompareTo(other.Groupname);
+            else
+                throw new ArgumentException("Object is not a Group");
         }
 
         public bool Equals(Group other)
         {
-            if(Object.ReferenceEquals(other, null))
-            {
+            if (other == null)
                 return false;
-            }
 
-            if(Object.ReferenceEquals(this, other))
-            {
+            if (ReferenceEquals(this, other) || Groupname == other.Groupname)
                 return true;
-            }
-
-            return Groupname == other.Groupname;
+            else
+                return false;
         }
 
         public override int GetHashCode()

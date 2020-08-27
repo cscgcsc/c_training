@@ -1,7 +1,4 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Support.UI;
-using System.Threading;
 
 namespace WebAddressBookTests
 {
@@ -16,26 +13,23 @@ namespace WebAddressBookTests
             if(IsLoggedIn())
             {
                 if (IsLoggedIn(userData))
-                {
                     return;
-                }                 
+                
                 Logout();               
             }
 
-            Type(By.Name("user"), userData.Login);
-            Type(By.Name("pass"), userData.Password);
-            driver.FindElement(By.Id("LoginForm")).Submit();
-
-            Thread.Sleep(1000);
+            Type(By.XPath("//input[@name='user']"), userData.Login);
+            Type(By.XPath("//input[@name='pass']"), userData.Password);
+            IWebElement element = driver.FindElement(By.XPath("//form[@id='LoginForm']//input[@type='submit']"));
+            element.Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.StalenessOf(element));
         }
 
         public void Logout()
-        {       
-            By Element = By.XPath("//a[contains(text(),'Logout')]");           
-            if (IsElementPresent(Element))
-            {
-                driver.FindElement(Element).Click();
-            }
+        {                
+            if (IsElementPresent(By.XPath("//a[contains(text(),'Logout')]"), out IWebElement element))
+                element.Click();
+
         }
 
         public bool IsLoggedIn(User userData)

@@ -9,7 +9,7 @@ namespace WebAddressBookTests
     {
         public Stopwatch stopWatch;
         public static Random rnd = new Random();
-        protected ApplicationManager applicationManager;
+        protected ApplicationManager app;
         public bool LONG_UI_CHECKS = true;
       
         public void StartCalculationRunTime()
@@ -69,8 +69,8 @@ namespace WebAddressBookTests
         [SetUp]
         protected void SetupTest()
         {
-            applicationManager = ApplicationManager.GetInstance();
-            applicationManager.NavigationHelper.OpenURL();
+            app = ApplicationManager.GetInstance();
+            app.NavigationHelper.OpenURL();
         }   
     }
 }

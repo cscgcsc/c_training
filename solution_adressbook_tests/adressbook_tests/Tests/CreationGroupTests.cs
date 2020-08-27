@@ -88,11 +88,11 @@ namespace WebAddressBookTests
         [Test, TestCaseSource("GroupsDataFromCsvProvider")]
         public void CreateGroup(Group groupData)
         {
-            applicationManager.GroupHelper.InitGroupsListAction();
+            app.GroupHelper.InitGroupsListAction();
             List<Group> oldGroupsList = Group.GetAll();
             oldGroupsList.Add(groupData);
                    
-            applicationManager.GroupHelper.Create(groupData);
+            app.GroupHelper.Create(groupData);
             List<Group> newGroupsList = Group.GetAll();
             oldGroupsList.Sort();
             newGroupsList.Sort();
@@ -103,14 +103,14 @@ namespace WebAddressBookTests
         //[Test, TestCaseSource("GroupsDataFromCsvProvider")]
         public void OldCreateGroup(Group groupData)
         {
-            applicationManager.GroupHelper.InitGroupsListAction();
+            app.GroupHelper.InitGroupsListAction();
 
-            List<Group> oldGroupsList = applicationManager.GroupHelper.GetGroupsList();
+            List<Group> oldGroupsList = app.GroupHelper.GetGroupsList();
             oldGroupsList.Add(groupData);
             oldGroupsList.Sort();
 
-            applicationManager.GroupHelper.Create(groupData);
-            List<Group> newGroupsList = applicationManager.GroupHelper.GetGroupsList();
+            app.GroupHelper.Create(groupData);
+            List<Group> newGroupsList = app.GroupHelper.GetGroupsList();
             newGroupsList.Sort();
 
             Assert.AreEqual(oldGroupsList, newGroupsList);

@@ -9,11 +9,11 @@ namespace WebAddressBookTests
         [Test]
         public void ModifyGroup()
         {
-            applicationManager.GroupHelper.InitGroupsListAction();
+            app.GroupHelper.InitGroupsListAction();
             List<Group> oldGroupsList = Group.GetAll();
             if (oldGroupsList.Count == 0)
             { 
-                applicationManager.GroupHelper.Create(new Group("Test groupname"));
+                app.GroupHelper.Create(new Group("Test groupname"));
                 oldGroupsList = Group.GetAll();
             }
 
@@ -26,7 +26,7 @@ namespace WebAddressBookTests
             oldGroupsList[0].Groupname = groupData.Groupname;
             string modifiedId = oldGroupsList[0].Id;
 
-            applicationManager.GroupHelper.Modify(groupData, modifiedId);
+            app.GroupHelper.Modify(groupData, modifiedId);
             List<Group> newGroupsList = Group.GetAll();
             oldGroupsList.Sort();
             newGroupsList.Sort();
@@ -42,10 +42,10 @@ namespace WebAddressBookTests
         //[Test]
         public void OldModifyGroup()
         {
-            applicationManager.GroupHelper.InitGroupsListAction();
-            if (applicationManager.GroupHelper.IsGroupsListEmpty())
+            app.GroupHelper.InitGroupsListAction();
+            if (app.GroupHelper.IsGroupsListEmpty())
             {
-                applicationManager.GroupHelper.Create(new Group("Test groupname"));
+                app.GroupHelper.Create(new Group("Test groupname"));
             }
 
             Group groupData = new Group("New groupname")
@@ -54,12 +54,12 @@ namespace WebAddressBookTests
                 Groupfooter = "New groupfooter"
             };
 
-            List<Group> oldGroupsList = applicationManager.GroupHelper.GetGroupsList();
+            List<Group> oldGroupsList = app.GroupHelper.GetGroupsList();
             oldGroupsList[0].Groupname = groupData.Groupname;
             oldGroupsList.Sort();
 
-            applicationManager.GroupHelper.Modify(groupData, 0);
-            List<Group> newGroupsList = applicationManager.GroupHelper.GetGroupsList();
+            app.GroupHelper.Modify(groupData, 0);
+            List<Group> newGroupsList = app.GroupHelper.GetGroupsList();
             newGroupsList.Sort();
 
             Assert.AreEqual(oldGroupsList, newGroupsList);

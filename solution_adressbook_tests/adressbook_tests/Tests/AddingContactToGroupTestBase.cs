@@ -10,12 +10,12 @@ namespace WebAddressBookTests
         {
             if (LONG_UI_CHECKS)
             {
-                applicationManager.ContactHelper.InitContactsListAction();
+                app.ContactHelper.InitContactsListAction();
 
                 //none
                 List<Contact> contactsListDB = Group.GetContactsNotInGroups();
-                applicationManager.ContactHelper.SelectGroupFilter("[none]");
-                List<Contact> contactsListUI = applicationManager.ContactHelper.GetContactsList();
+                app.ContactHelper.SelectGroupFilter("[none]");
+                List<Contact> contactsListUI = app.ContactHelper.GetContactsList();
                 contactsListDB.Sort();
                 contactsListUI.Sort();
                 Assert.AreEqual(contactsListUI, contactsListDB);
@@ -24,8 +24,8 @@ namespace WebAddressBookTests
                 foreach (Group group in groupsListDB)
                 {
                     contactsListDB = Group.GetContactsInGroup(group.Id);
-                    applicationManager.ContactHelper.SelectGroupFilter(group.Id);
-                    contactsListUI = applicationManager.ContactHelper.GetContactsList();
+                    app.ContactHelper.SelectGroupFilter(group.Id);
+                    contactsListUI = app.ContactHelper.GetContactsList();
                     contactsListDB.Sort();
                     contactsListUI.Sort();
 

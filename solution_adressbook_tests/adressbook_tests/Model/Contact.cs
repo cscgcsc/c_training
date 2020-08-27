@@ -7,7 +7,7 @@ using System.Linq;
 namespace WebAddressBookTests
 {
     [Table("addressbook")]
-    public class Contact : IEquatable<Contact>, IComparable<Contact>
+    public class Contact : IEquatable<Contact>, IComparable
     {
         private string initial;
         private string allEmail;
@@ -44,8 +44,8 @@ namespace WebAddressBookTests
 
         public Contact(string firstname, string lastname)
         {
-            this.Firstname  = firstname;
-            this.Lastname   = lastname;
+            Firstname  = firstname;
+            Lastname   = lastname;
         }
 
         //пустой конструктор для XmlSerializer
@@ -97,13 +97,9 @@ namespace WebAddressBookTests
             get
             {
                 if(initial != null)
-                {
                     return initial;
-                }
                 else
-                {
-                    return GenerateInitial();
-                }               
+                    return GenerateInitial();              
             }
             set
             {
@@ -116,9 +112,7 @@ namespace WebAddressBookTests
             get
             {
                 if (age != null)
-                {
                     return age;
-                }
 
                 if (int.TryParse(Birthyear, out int intBirthyear))
                 {
@@ -153,9 +147,7 @@ namespace WebAddressBookTests
             get
             {
                 if (anniversary != null)
-                {
                     return anniversary;
-                }
 
                 if (int.TryParse(Anniversaryyear, out int intAnniversaryyear))
                 {
@@ -190,9 +182,7 @@ namespace WebAddressBookTests
             get
             {
                 if (allEmail != null)
-                {
                     return allEmail;
-                }
                 else
                 {
                     string result = CleanUpEmail(Email);
@@ -213,9 +203,7 @@ namespace WebAddressBookTests
             get
             {
                 if (allPhones != null)
-                {
                     return allPhones;
-                }
                 else
                 {
                     string result = CleanUpPhone(Home);
@@ -243,9 +231,7 @@ namespace WebAddressBookTests
         private string CleanUpPhone(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
-            {
                 return "";
-            }
 
             return Regex.Replace(text, "[ \\-()]", "") + "\r\n";
         }
@@ -253,9 +239,7 @@ namespace WebAddressBookTests
         private string CleanUpEmail(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
-            {
                 return "";
-            }
 
             return text.Trim() + "\r\n";
         }
@@ -263,9 +247,7 @@ namespace WebAddressBookTests
         private string CleanUpInitial(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
-            {
                 return "";
-            }
 
             return text.Trim() + " ";
         }
@@ -282,51 +264,44 @@ namespace WebAddressBookTests
         //Example 2
         //public string Firstname { get => firstname; set => firstname = value; }
 
-        public int CompareTo(Contact other)
+        public int CompareTo(object obj)
         {
             //1 - текущий объект больше
             //0 - объекты равны
             //-1 - текущий объект меньше
-            if (Object.ReferenceEquals(other, null))
-            {
+            if (obj is null)
                 return 1;
-            }
 
-            int result = Firstname.CompareTo(other.Firstname);
-            if (result != 0)
+            if (obj is Contact other)
             {
-                return result;
+                int result = Firstname.CompareTo(other.Firstname);
+                if (result != 0)
+                    return result;
+                return Lastname.CompareTo(other.Lastname);
             }
-
-            return Lastname.CompareTo(other.Lastname);      
+            else
+                throw new ArgumentException("Object is not a Contact");
         }
 
         public bool Equals(Contact other)
         {
-            if (Object.ReferenceEquals(other, null))
-            {
+            if (other == null)
                 return false;
-            }
 
-            if (Object.ReferenceEquals(this, other))
-            {
+            if (ReferenceEquals(this, other) || Firstname == other.Firstname && Lastname == other.Lastname)
                 return true;
-            }
-
-            if (Firstname != other.Firstname)
-            {
+            else
                 return false;
-            }
-
-            return Lastname == other.Lastname;            
         }
 
         public override int GetHashCode()
         {
-            int result = 1;
-            result = result * 13 + Firstname.GetHashCode();
+            if (this is null) 
+                return 0;
 
-            return result * 13 + Lastname.GetHashCode();
+            int hashFirstname = Firstname.GetHashCode();
+            int hashLastname = Lastname.GetHashCode();
+            return hashFirstname ^ hashLastname;
         }
 
         public override string ToString()
@@ -339,20 +314,22 @@ namespace WebAddressBookTests
     {
         public bool Equals(Contact x, Contact y)
         {
-            if (Object.ReferenceEquals(x, y)) return true;
-            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+            if (x is null || y is null)
                 return false;
+
+            if (ReferenceEquals(x, y)) 
+                return true;
 
             return x.Id == y.Id && x.Firstname == y.Firstname;
         }
 
         public int GetHashCode(Contact contact)
         {
-            if (Object.ReferenceEquals(contact, null)) return 0;
+            if (contact is null) 
+                return 0;
 
             int hashContactId = contact.Id == null ? 0 : contact.Id.GetHashCode();
             int hashContactFirstname = contact.Firstname.GetHashCode();
-
             return hashContactId ^ hashContactFirstname;
         }
     }

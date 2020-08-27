@@ -9,18 +9,18 @@ namespace WebAddressBookTests
         [Test]
         public void RemoveContact()
         {
-            applicationManager.ContactHelper.InitContactsListAction();
+            app.ContactHelper.InitContactsListAction();
             List<Contact> oldContactsList = Contact.GetAll();
             if (oldContactsList.Count == 0)
             {
-                applicationManager.ContactHelper.Create(new Contact("Ivanov", "Ivan"));
+                app.ContactHelper.Create(new Contact("Ivanov", "Ivan"));
                 oldContactsList = Contact.GetAll();
             }
 
             string deletedId = oldContactsList[0].Id;
             oldContactsList.RemoveAt(0);
            
-            applicationManager.ContactHelper.Remove(deletedId);
+            app.ContactHelper.Remove(deletedId);
             List<Contact> newContactsList = Contact.GetAll();
             oldContactsList.Sort();
             newContactsList.Sort();
@@ -32,32 +32,28 @@ namespace WebAddressBookTests
         [Test]
         public void RemoveAllContacts()
         {
-            applicationManager.ContactHelper.InitContactsListAction();
+            app.ContactHelper.InitContactsListAction();
             if (Contact.GetAll().Count == 0)
-            {
-                applicationManager.ContactHelper.Create(new Contact("Ivanov", "Ivan"));
-            }
+                app.ContactHelper.Create(new Contact("Ivanov", "Ivan"));
 
-            applicationManager.ContactHelper.Remove();
+            app.ContactHelper.Remove();
             Assert.IsTrue(Contact.GetAll().Count == 0);
         }
 
         //[Test]
         public void OldRemoveContact()
         {
-            applicationManager.ContactHelper.InitContactsListAction();
-            if (applicationManager.ContactHelper.IsContactsListEmpty())
-            {
-                applicationManager.ContactHelper.Create(new Contact("Ivanov", "Ivan"));
-            }
+            app.ContactHelper.InitContactsListAction();
+            if (app.ContactHelper.IsContactsListEmpty())
+                app.ContactHelper.Create(new Contact("Ivanov", "Ivan"));
 
-            List<Contact> oldContactsList = applicationManager.ContactHelper.GetContactsList();
+            List<Contact> oldContactsList = app.ContactHelper.GetContactsList();
             string deletedId = oldContactsList[0].Id;
             oldContactsList.RemoveAt(0);
             oldContactsList.Sort();
 
-            applicationManager.ContactHelper.Remove(0);
-            List<Contact> newContactsList = applicationManager.ContactHelper.GetContactsList();
+            app.ContactHelper.Remove(0);
+            List<Contact> newContactsList = app.ContactHelper.GetContactsList();
             newContactsList.Sort();
 
             Assert.AreEqual(oldContactsList, newContactsList);
@@ -71,14 +67,12 @@ namespace WebAddressBookTests
         //[Test]
         public void OldRemoveAllContacts()
         {
-            applicationManager.ContactHelper.InitContactsListAction();
-            if (applicationManager.ContactHelper.IsContactsListEmpty())
-            {
-                applicationManager.ContactHelper.Create(new Contact("Ivanov", "Ivan"));
-            }
+            app.ContactHelper.InitContactsListAction();
+            if (app.ContactHelper.IsContactsListEmpty())
+                app.ContactHelper.Create(new Contact("Ivanov", "Ivan"));
 
-            applicationManager.ContactHelper.Remove();
-            Assert.IsTrue(applicationManager.ContactHelper.IsContactsListEmpty());
+            app.ContactHelper.Remove();
+            Assert.IsTrue(app.ContactHelper.IsContactsListEmpty());
         }
     }
 }

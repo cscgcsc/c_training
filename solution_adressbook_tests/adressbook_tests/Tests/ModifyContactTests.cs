@@ -9,11 +9,11 @@ namespace WebAddressBookTests
         [Test]
         public void ModifyContactHome()
         {
-            applicationManager.ContactHelper.InitContactsListAction();
+            app.ContactHelper.InitContactsListAction();
             List<Contact> oldContactsList = Contact.GetAll();
             if (oldContactsList.Count == 0)
             {
-                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
+                app.ContactHelper.Create(app.ContactHelper.GetDefaultContactData());
                 oldContactsList = Contact.GetAll();
             }
 
@@ -47,7 +47,7 @@ namespace WebAddressBookTests
             oldContactsList[0].Lastname = contactData.Lastname;
             string modifiedId = oldContactsList[0].Id;
 
-            applicationManager.ContactHelper.Modify(contactData, modifiedId);
+            app.ContactHelper.Modify(contactData, modifiedId);
             List<Contact> newContactsList = Contact.GetAll();
             oldContactsList.Sort();
             newContactsList.Sort();
@@ -84,11 +84,11 @@ namespace WebAddressBookTests
         [Test]
         public void ModifyContactBirthday()
         {
-            applicationManager.ContactHelper.InitBirthdaysListAction();
+            app.ContactHelper.InitBirthdaysListAction();
             List<Contact> oldBirthdaysList = Contact.GetBirthdays();
             if (oldBirthdaysList.Count == 0)
             {
-                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
+                app.ContactHelper.Create(app.ContactHelper.GetDefaultContactData());
                 oldBirthdaysList = Contact.GetBirthdays();
             }
 
@@ -104,7 +104,7 @@ namespace WebAddressBookTests
             oldBirthdaysList[0].Lastname = contactData.Lastname;
             string modifiedId = oldBirthdaysList[0].Id;
 
-            applicationManager.ContactHelper.Modify(contactData, modifiedId);
+            app.ContactHelper.Modify(contactData, modifiedId);
             List<Contact> newBirthdaysList = Contact.GetBirthdays();
             oldBirthdaysList.Sort();
             newBirthdaysList.Sort();
@@ -123,11 +123,9 @@ namespace WebAddressBookTests
         //[Test]
         public void OldModifyContactHome()
         {
-            applicationManager.ContactHelper.InitContactsListAction();
-            if (applicationManager.ContactHelper.IsContactsListEmpty())
-            {
-                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
-            }
+            app.ContactHelper.InitContactsListAction();
+            if (app.ContactHelper.IsContactsListEmpty())
+                app.ContactHelper.Create(app.ContactHelper.GetDefaultContactData());
 
             Contact contactData = new Contact("Maksim", "Maksimov")
             {
@@ -137,13 +135,13 @@ namespace WebAddressBookTests
                 Birthyear = "1900"
             };
 
-            List<Contact> oldContactsList = applicationManager.ContactHelper.GetContactsList();
+            List<Contact> oldContactsList = app.ContactHelper.GetContactsList();
             oldContactsList[0].Firstname = contactData.Firstname;
             oldContactsList[0].Lastname = contactData.Lastname;
             oldContactsList.Sort();
 
-            applicationManager.ContactHelper.Modify(contactData, 0);
-            List<Contact> newContactsList = applicationManager.ContactHelper.GetContactsList();
+            app.ContactHelper.Modify(contactData, 0);
+            List<Contact> newContactsList = app.ContactHelper.GetContactsList();
             newContactsList.Sort();
 
             Assert.AreEqual(oldContactsList, newContactsList);
@@ -161,11 +159,9 @@ namespace WebAddressBookTests
         //[Test]
         public void OldModifyContactBirthday()
         {
-            applicationManager.ContactHelper.InitBirthdaysListAction();
-            if (applicationManager.ContactHelper.IsBirthdaysListEmpty())
-            {
-                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
-            }
+            app.ContactHelper.InitBirthdaysListAction();
+            if (app.ContactHelper.IsBirthdaysListEmpty())
+                app.ContactHelper.Create(app.ContactHelper.GetDefaultContactData());
 
             Contact contactData = new Contact("Maksim", "Maksimov")
             {
@@ -174,12 +170,12 @@ namespace WebAddressBookTests
                 Birthmonth = "January",
                 Birthyear = "1900"
             };
-            List<Contact> oldBirthdaysList = applicationManager.ContactHelper.GetBirthdaysList();
+            List<Contact> oldBirthdaysList = app.ContactHelper.GetBirthdaysList();
             oldBirthdaysList[0].Firstname = contactData.Firstname;
             oldBirthdaysList[0].Initial = contactData.GenerateInitial();
 
-            applicationManager.ContactHelper.Modify(contactData, 0);
-            List<Contact> newBirthdaysList = applicationManager.ContactHelper.GetBirthdaysList();
+            app.ContactHelper.Modify(contactData, 0);
+            List<Contact> newBirthdaysList = app.ContactHelper.GetBirthdaysList();
             oldBirthdaysList.Sort();
             newBirthdaysList.Sort();
 

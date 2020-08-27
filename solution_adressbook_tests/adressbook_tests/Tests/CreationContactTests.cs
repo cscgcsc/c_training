@@ -155,7 +155,7 @@ namespace WebAddressBookTests
             List<Contact> oldContactsList = Contact.GetAll();
             oldContactsList.Add(contactData);
             
-            applicationManager.ContactHelper.Create(contactData);
+            app.ContactHelper.Create(contactData);
             List<Contact> newContactsList = Contact.GetAll();
             oldContactsList.Sort();
             newContactsList.Sort();
@@ -166,13 +166,13 @@ namespace WebAddressBookTests
         //[Test, TestCaseSource("ContactsDataFromXmlProvider")]
         public void OldCreateContact(Contact contactData)
         {
-            List<Contact> oldContactsList = applicationManager.ContactHelper.GetContactsList();
+            List<Contact> oldContactsList = app.ContactHelper.GetContactsList();
             oldContactsList.Add(contactData);
             oldContactsList.Sort();
 
-            applicationManager.ContactHelper.Create(contactData);
+            app.ContactHelper.Create(contactData);
 
-            List<Contact> newContactsList = applicationManager.ContactHelper.GetContactsList();
+            List<Contact> newContactsList = app.ContactHelper.GetContactsList();
             newContactsList.Sort();
 
             Assert.AreEqual(oldContactsList, newContactsList);

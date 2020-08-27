@@ -8,34 +8,29 @@ namespace WebAddressBookTests
         [Test]
         public void TestContactInformationFromTableHome()
         {
-            applicationManager.ContactHelper.InitContactsListAction();
-            if (Contact.GetAll().Count == 0)
-            {
-                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
-            }
+            app.ContactHelper.InitContactsListAction();
+            if (Contact.GetAll().Count == 0) 
+                app.ContactHelper.Create(app.ContactHelper.GetDefaultContactData());
 
-            Contact contactDataFromTable = applicationManager.ContactHelper.GetContactInformationFromTable(0);
-            Contact contactDataFromForm = applicationManager.ContactHelper.GetContactInformationFromEditForm(0);
+            Contact contactDataFromTable = app.ContactHelper.GetContactInformationFromTable(0);
+            Contact contactDataFromForm = app.ContactHelper.GetContactInformationFromEditForm(0);
 
             Assert.AreEqual(contactDataFromTable.Firstname, contactDataFromForm.Firstname);
             Assert.AreEqual(contactDataFromTable.Lastname, contactDataFromForm.Lastname);
             Assert.AreEqual(contactDataFromTable.Address, contactDataFromForm.Address);
             Assert.AreEqual(contactDataFromTable.AllEmail, contactDataFromForm.AllEmail);
             Assert.AreEqual(contactDataFromTable.AllPhones, contactDataFromForm.AllPhones);
-
         }
 
         [Test]
         public void TestContactInformationFromTableBirthday()
         {
-            applicationManager.ContactHelper.InitBirthdaysListAction();
-            if (Contact.GetBirthdays().Count == 0)
-            {
-                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
-            }
+            app.ContactHelper.InitBirthdaysListAction();
+            if (Contact.GetBirthdays().Count == 0) 
+                app.ContactHelper.Create(app.ContactHelper.GetDefaultContactData());
 
-            Contact contactDataFromTable = applicationManager.ContactHelper.GetContactInformationFromBirthdaysTable(0);
-            Contact contactDataFromForm = applicationManager.ContactHelper.GetContactInformationFromEditForm(0);
+            Contact contactDataFromTable = app.ContactHelper.GetContactInformationFromBirthdaysTable(0);
+            Contact contactDataFromForm = app.ContactHelper.GetContactInformationFromEditForm(0);
 
             Assert.AreEqual(contactDataFromTable.Initial, contactDataFromForm.Initial);
             Assert.AreEqual(contactDataFromTable.Firstname, contactDataFromForm.Firstname);
@@ -47,15 +42,13 @@ namespace WebAddressBookTests
         [Test]
         public void TestContactInformationFromPrintFormHome()
         {
-            applicationManager.ContactHelper.InitContactsListAction();
-            if (Contact.GetAll().Count == 0)
-            {
-                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
-            }
+            app.ContactHelper.InitContactsListAction();
+            if (Contact.GetAll().Count == 0) 
+                app.ContactHelper.Create(app.ContactHelper.GetDefaultContactData());
 
-            string printText = applicationManager.ContactHelper.GetContactInformationFromPrintForm(0);
-            Contact contactDataFromForm = applicationManager.ContactHelper.GetContactInformationFromEditForm(0);
-            string concatPrintText = applicationManager.ContactHelper.ConcatPrintInformation(contactDataFromForm);
+            string printText = app.ContactHelper.GetContactInformationFromPrintForm(0);
+            Contact contactDataFromForm = app.ContactHelper.GetContactInformationFromEditForm(0);
+            string concatPrintText = app.ContactHelper.ConcatPrintInformation(contactDataFromForm);
 
             Assert.AreEqual(printText, concatPrintText);
         }
@@ -63,15 +56,13 @@ namespace WebAddressBookTests
         [Test]
         public void TestContactInformationFromPrintFormBirthday()
         {
-            applicationManager.ContactHelper.InitBirthdaysListAction();
-            if (Contact.GetBirthdays().Count == 0)
-            {
-                applicationManager.ContactHelper.Create(applicationManager.ContactHelper.GetDefaultContactData());
-            }
+            app.ContactHelper.InitBirthdaysListAction();
+            if (Contact.GetBirthdays().Count == 0) 
+                app.ContactHelper.Create(app.ContactHelper.GetDefaultContactData());
 
-            string printText = applicationManager.ContactHelper.GetContactInformationFromPrintForm(0);
-            Contact contactDataFromForm = applicationManager.ContactHelper.GetContactInformationFromEditForm(0);
-            string concatPrintText = applicationManager.ContactHelper.ConcatPrintInformation(contactDataFromForm);
+            string printText = app.ContactHelper.GetContactInformationFromPrintForm(0);
+            Contact contactDataFromForm = app.ContactHelper.GetContactInformationFromEditForm(0);
+            string concatPrintText = app.ContactHelper.ConcatPrintInformation(contactDataFromForm);
 
             Assert.AreEqual(printText, concatPrintText);
         }

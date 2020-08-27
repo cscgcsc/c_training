@@ -1,7 +1,4 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Support.UI;
-using System;
 using System.Collections.Generic;
 
 namespace WebAddressBookTests
@@ -19,7 +16,7 @@ namespace WebAddressBookTests
             AddGroup();
             FillingGroupData(groupData);
             FormSubmit();
-            applicationManager.NavigationHelper.ReturnToGroupPage();
+            app.NavigationHelper.ReturnToGroupPage();
         }
 
         public void Modify(Group groupData, int index)
@@ -28,7 +25,7 @@ namespace WebAddressBookTests
             ModifyGroup();
             FillingGroupData(groupData);
             FormUpdate();
-            applicationManager.NavigationHelper.ReturnToGroupPage();
+            app.NavigationHelper.ReturnToGroupPage();
         }
 
         public void Modify(Group groupData, string id)
@@ -37,28 +34,28 @@ namespace WebAddressBookTests
             ModifyGroup();
             FillingGroupData(groupData);
             FormUpdate();
-            applicationManager.NavigationHelper.ReturnToGroupPage();
+            app.NavigationHelper.ReturnToGroupPage();
         }
 
         public void Remove(int index)
         {
             SelectGroup(index);
             RemoveGroup();
-            applicationManager.NavigationHelper.ReturnToGroupPage();
+            app.NavigationHelper.ReturnToGroupPage();
         }
 
         public void Remove(string id)
         {
             SelectGroup(id);
             RemoveGroup();
-            applicationManager.NavigationHelper.ReturnToGroupPage();
+            app.NavigationHelper.ReturnToGroupPage();
         }
 
         private void FillingGroupData(Group groupData)
         {
-            Type(By.Name("group_name"), groupData.Groupname);
-            Type(By.Name("group_header"), groupData.Groupheader);
-            Type(By.Name("group_footer"), groupData.Groupfooter);
+            Type(By.XPath("//input[@name='group_name']"), groupData.Groupname);
+            Type(By.XPath("//textarea[@name='group_header']"), groupData.Groupheader);
+            Type(By.XPath("//textarea[@name='group_footer']"), groupData.Groupfooter);
         }
 
         public bool IsGroupsListEmpty()
@@ -124,8 +121,8 @@ namespace WebAddressBookTests
 
         public void InitGroupsListAction()
         {
-            applicationManager.NavigationHelper.GoToGroupPage();
-            applicationManager.NavigationHelper.SetStartPage();
+            app.NavigationHelper.GoToGroupPage();
+            app.NavigationHelper.SetStartPage();
         }
     }
 }

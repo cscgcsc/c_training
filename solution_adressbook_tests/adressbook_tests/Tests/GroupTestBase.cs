@@ -10,8 +10,8 @@ namespace WebAddressBookTests
         {
             if (LONG_UI_CHECKS)
             {
-                applicationManager.GroupHelper.InitGroupsListAction();
-                List<Group> groupsListUI = applicationManager.GroupHelper.GetGroupsList();
+                app.GroupHelper.InitGroupsListAction();
+                List<Group> groupsListUI = app.GroupHelper.GetGroupsList();
                 List<Group> groupsListDB = Group.GetAll();
                 groupsListDB.Sort();
                 groupsListUI.Sort();

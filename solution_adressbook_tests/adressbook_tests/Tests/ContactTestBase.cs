@@ -1,9 +1,5 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WebAddressBookTests
 {
@@ -14,8 +10,8 @@ namespace WebAddressBookTests
         {
             if (LONG_UI_CHECKS)
             {
-                applicationManager.ContactHelper.InitContactsListAction();
-                List<Contact> contactsListUI = applicationManager.ContactHelper.GetContactsList();
+                app.ContactHelper.InitContactsListAction();
+                List<Contact> contactsListUI = app.ContactHelper.GetContactsList();
                 List<Contact> contactsListDB = Contact.GetAll();
                 contactsListDB.Sort();
                 contactsListUI.Sort();
@@ -29,8 +25,8 @@ namespace WebAddressBookTests
         {
             if (LONG_UI_CHECKS)
             {
-                applicationManager.ContactHelper.InitBirthdaysListAction();              
-                List<Contact> birthdaysListUI = applicationManager.ContactHelper.GetBirthdaysList();
+                app.ContactHelper.InitBirthdaysListAction();              
+                List<Contact> birthdaysListUI = app.ContactHelper.GetBirthdaysList();
                 List<Contact> birthdaysListDB = Contact.GetBirthdays();
 
                 foreach (Contact birthday in birthdaysListDB)
